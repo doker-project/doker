@@ -13,34 +13,34 @@ Run in console::
 Usage
 =====
 
-Create ``mydoc.yaml``::
+Create ``minimal.yaml``::
 
   entry: .
 
 Create ``main.rst``::
 
-  My First Document
-  =================
+  Minimal Document
+  ================
 
   **Hello**, _world_!
 
 And run in console::
 
-  doker mydoc
+  doker minimal
 
-Find ``mydoc.pdf`` in the current directory.
+Find ``minimal.pdf`` in the current directory.
 
 Deeper diving
 =============
 
-See `examples <examples>`__ for most popular use cases.
+See `examples <https://github.com/doker-project/doker/tree/master/examples>`__ for most popular use cases.
 
 Documentation
 =============
 
-Read the `doc <https://doker.org/doc/>`__ for API details.
+Read the `user's manual <https://doker.org/manual.pdf>`__ for usage details.
 
 License
 =======
 
-Source code is licensed under `MIT license <LICENSE>`__.
+Source code is licensed under `MIT license <https://github.com/doker-project/doker/blob/master/LICENSE>`__.
