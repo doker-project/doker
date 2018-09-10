@@ -28,5 +28,8 @@ setup(
     package_data={
         '': ['CHANGELOG.rst', 'LICENSE']
     },
+    install_requires = [
+        'pyyaml',
+    ],
 )
 
