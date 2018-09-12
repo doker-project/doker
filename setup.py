@@ -1,16 +1,16 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 from os import path 
 from setuptools import find_packages, setup
 
 current_dir = path.abspath(path.dirname(__file__))
 
-with open(path.join(current_dir, 'CHANGELOG.rst'), encoding='utf-8') as f:
-    version = f.readline().strip()
+with open(path.join(current_dir, 'CHANGELOG.rst'), 'r') as f:
+    __version__ = f.readline().strip()
 
 setup(
     name='doker',
-    version=version,
+    version=__version__,
     packages=find_packages(),
     author='Doker Authors',
     description="Rich PDF documents creating tool",
@@ -30,6 +30,7 @@ setup(
     },
     install_requires = [
         'pyyaml',
+        'rst2pdf',
     ],
 )
 

@@ -1,4 +1,4 @@
 Minimal Document
 ================
 
-**Hello**, _world_!
+**Hello**, *world*!
