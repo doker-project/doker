@@ -26,7 +26,7 @@ Create ``main.rst``::
 
 And run in console::
 
-  doker minimal
+  doker --pdf minimal
 
 Find ``minimal.pdf`` in the current directory.
 
