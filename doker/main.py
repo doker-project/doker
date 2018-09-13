@@ -1,11 +1,20 @@
 #!/usr/bin/env python
 
 import argparse
+import json
 import os
 import re
 import sys
 import yaml
 from rst2pdf.createpdf import RstToPdf
+
+def file_list2tree(file_list):
+    tree = {}
+    for file in file_list:
+        key = re.sub(r'^\d+-', '', file) # Remove number at the beginning
+        key = re.sub(r'\..*$', '', key)  # Remove suffix
+        tree[key] = file
+    return tree
 
 def file_tree(dir, tree=None):
     files = os.listdir(dir)
@@ -56,18 +65,75 @@ def file_list(tree):
   return obj_list
 
 def preprocess(text, project):
+    if 'fields' in project:
+        for field in project['fields']:
+            text = re.sub(r'\#\#\#' + field + r'\#\#\#', str(project['fields'][field]), text, flags=re.IGNORECASE)
+    text += '\n\n'
     return text
 
 def generate_html(files, project):
     return
 
 def generate_pdf(files, project, output):
+    generated = []
+    pdf = project['pdf'] if 'pdf' in project else None
+
+    # Stylesheet processing
+    stylesheets = []
+    if 'stylesheet' in pdf:
+        stylesheet = pdf['stylesheet']
+        with open(stylesheet, 'r') as f:
+            try:
+                style = yaml.load(f)
+            except yaml.YAMLError as err:
+                sys.stderr.write('Error: Parsing YAML style file failed: ' + err + '\n')
+                sys.exit(1)
+
+        stylesheet_json = 'tmp-stylesheet.json'
+        print('Generatind temporary "' + stylesheet_json + '"')
+        with open(stylesheet_json, 'w') as f:
+            f.write(json.dumps(style))
+        generated.append(stylesheet_json)
+        stylesheets.append(stylesheet_json)
+
     text = ''
+
+    if 'cover' in pdf:
+        with open(pdf['cover'], 'r') as f:
+            text += preprocess(f.read(), project)
+
+    # Text processing
     for file in files:
         with open(file['src'], 'r') as f:
             text += preprocess(f.read(), project)
+
+    # Generating PDF        
     print('Generating "' + os.path.basename(output) + '"')
-    RstToPdf().createPdf(text=text, output=output)
+    try:
+        RstToPdf(stylesheets=stylesheets).createPdf(text=text, output=output)
+    except Exception as err:
+        sys.stderr.write('Error: PDF generating failed: ' + err + '\n')
+        sys.exit(1)
+
+    print('Post-processing "' + os.path.basename(output) + '"')
+    try:
+        import pkg_resources
+        __version__ = pkg_resources.get_distribution('doker').version
+    except Exception:
+        __version__ = None
+    creator = 'doker'
+    if __version__:
+        creator += ' v' + __version__
+    creator += ' - doker.org'
+    with open(output, 'rb') as f:
+        text = f.read()
+    with open(output, 'wb') as f:
+        f.write(re.sub(r'/Creator \(\\\(unspecified\\\)\)', '/Creator (' + creator + ')' , text))
+
+    # Temporary files removing
+    for generated_file in generated:
+        print('Removing temporary "' + os.path.basename(generated_file) + '"')
+        os.remove(generated_file)
 
 def main():
     try:
@@ -93,9 +159,9 @@ def main():
             sys.stderr.write('Error: Unable to open project file: ' + project_file + '\n')
             sys.exit(1)
     
-    with open(project_file, 'r') as stream:
+    with open(project_file, 'r') as f:
         try:
-            project = yaml.load(stream)
+            project = yaml.load(f)
         except yaml.YAMLError as err:
             sys.stderr.write('Error: Parsing YAML project file failed: ' + err + '\n')
             sys.exit(1)
@@ -105,7 +171,8 @@ def main():
         project['entry'] = '.'
     entry_dir = os.path.abspath(project['entry'])
 
-    tree = file_tree(entry_dir)
+    tree = file_list2tree(project['files']) if 'files' in project else file_tree(entry_dir)
+
     files = []
     if 'index' in tree:
         files.append({ 'src': tree['index'] })
