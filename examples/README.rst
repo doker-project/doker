@@ -19,3 +19,12 @@ Styled
 * Project file: `styled.yaml <styled/styled.yaml>`__
 * Stylesheet file: `stylesheet.yaml <styled/stylesheet.yaml>`__
 * Output: `styled.pdf <styled/styled.pdf>`__
+
+Cover
+-------
+
+* Description: Generating the PDF document with cover page
+* Project file: `cover.yaml <cover/cover.yaml>`__
+* Cover file: `cover.rst <cover/cover.rst>`__
+* Stylesheet file: `stylesheet.yaml <cover/stylesheet.yaml>`__
+* Output: `cover.pdf <cover/cover.pdf>`__

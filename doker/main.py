@@ -6,6 +6,9 @@ import os
 import re
 import sys
 import yaml
+from rst2pdf.extensions import vectorpdf_r2p
+import rst2pdf.image
+#from vectorpdf_r2p import VectorPdf
 from rst2pdf.createpdf import RstToPdf
 
 def file_list2tree(file_list):
@@ -109,8 +112,12 @@ def generate_pdf(files, project, output):
 
     # Generating PDF        
     print('Generating "' + os.path.basename(output) + '"')
+    rst2pdf.image.VectorPdf = vectorpdf_r2p.VectorPdf # Workaround for PDF processing
     try:
-        RstToPdf(stylesheets=stylesheets).createPdf(text=text, output=output)
+        RstToPdf(
+            stylesheets=stylesheets, 
+            background_fit_mode='scale'
+        ).createPdf(text=text, output=output)
     except Exception as err:
         sys.stderr.write('Error: PDF generating failed: ' + err + '\n')
         sys.exit(1)

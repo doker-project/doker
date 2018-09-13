@@ -57,7 +57,6 @@ styles:
       - [TOPPADDING, [0, 0], [-1, -1], 20]
 
   cover-date:
-    fontName: PTSans-Web-Bold
     fontSize: 10pt
     alignment: left
 
