@@ -1,0 +1,70 @@
+pageSetup:
+  margin-top: 10mm
+  margin-bottom: 7mm
+  margin-left: 15mm
+  margin-right: 15mm
+  margin-gutter: 0cm
+  spacing-header: 5mm
+  spacing-footer: 5mm
+  firstTemplate: coverPage
+
+pageTemplates:
+  coverPage:
+    margin-left: 10mm
+    margin-right: 10mm
+    frames:
+      - [0cm, 0cm, 100%, 100%]
+    background: cover_bg.pdf
+
+styles:
+  base:
+    kerning: true
+
+  normal:
+    fontSize: 12pt
+    leading: 16
+
+  bodytext:
+    spaceAfter: 5
+
+  title:
+    fontName: stdBold
+    fontSize: 40pt
+    alignment: right
+    spaceBefore: 5
+
+  subtitle:
+    fontSize: 30pt
+    textColor: '#A04040'
+    alignment: left
+    spaceBefore: 0
+
+  cover-table:
+    colWidths: [50%, 50%]
+    spaceBefore: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [RIGHTPADDING, [0, 0], [0, -1], 14]
+      - [LEFTPADDING, [1, 0], [1, -1], 14]
+
+  cover-version-table:
+    parent: table
+    colWidths: [50%, 10%, 40%]
+    commands:
+      - [ALIGN, [0, 0], [-1, -1], CENTER]
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [LEFTPADDING, [1, 0], [1, -1], 20]
+      - [TOPPADDING, [0, 0], [-1, -1], 20]
+
+  cover-date:
+    fontName: PTSans-Web-Bold
+    fontSize: 10pt
+    alignment: left
+
+  cover-version:
+    parent: cover-date
+    borderWidth: 1
+    borderPadding: 5
+    borderColor: black
+    borderRadius: 5
+    alignment: center

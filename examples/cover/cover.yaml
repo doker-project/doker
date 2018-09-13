@@ -1,0 +1,12 @@
+files:
+  - main.rst
+
+pdf:
+  cover: cover.rst
+  stylesheet: stylesheet.yaml
+
+fields:
+  title: Cover
+  subtitle: Example
+  version: 1
+  date: 13.09.2018
