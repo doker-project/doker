@@ -1,0 +1,23 @@
+pageSetup:
+  margin-top: 10mm
+  margin-bottom: 7mm
+  margin-left: 15mm
+  margin-right: 15mm
+
+styles:
+  base:
+    kerning: true
+
+  title:
+    fontName: stdBoldItalic
+
+  subtitle:
+    fontName: stdItalic
+
+  normal:
+    fontSize: 24pt
+
+  heading1:
+    fontSize: 36pt
+    textColor: '#A04040'
+    alignment: right
