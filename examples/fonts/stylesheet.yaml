@@ -1,0 +1,49 @@
+embeddedFonts:
+  - PTMono
+  - PTSans
+  - PTSansNarrow
+  - PTSerif
+
+fontsAlias:
+  stdMono: PTM55FT
+  stdMonoItalic: PTM55FT
+  stdMonoBold: PTM55FT
+  stdMonoBoldItalic: PTM55FT
+
+styles:
+  base:
+    kerning: true
+
+  title:
+    fontName: PT_Sans-Web-Bold
+    fontSize: 40pt
+
+  subtitle:
+    fontName: PT_Sans-Narrow-Web-Regular
+    fontSize: 30pt
+    textColor: '#A04040'
+
+  normal:
+    fontName: PTSerif
+    fontSize: 12pt
+    leading: 16
+
+  code:
+    backColor: '#EEEEEE'
+    borderColor: '#EEEEEE'
+    borderWidth: 2
+    borderRadius: 4
+    borderPadding: 6
+
+  heading1:
+    fontName: PT_Sans-Narrow-Web-Bold
+    fontSize: 36pt
+    textColor: '#A04040'
+
+  heading2:
+    fontName: PT_Sans-Narrow-Web-Bold
+    fontSize: 20pt
+
+  heading3:
+    fontName: PT_Sans-Web-BoldItalic
+    fontSize: 16pt

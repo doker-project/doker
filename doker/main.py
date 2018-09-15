@@ -6,9 +6,9 @@ import os
 import re
 import sys
 import yaml
+
 from rst2pdf.extensions import vectorpdf_r2p
 import rst2pdf.image
-#from vectorpdf_r2p import VectorPdf
 from rst2pdf.createpdf import RstToPdf
 
 def file_list2tree(file_list):
@@ -119,7 +119,8 @@ def generate_pdf(files, project, output):
             background_fit_mode='scale'
         ).createPdf(text=text, output=output)
     except Exception as err:
-        sys.stderr.write('Error: PDF generating failed: ' + err + '\n')
+        #print(err)
+        sys.stderr.write('Error: PDF generating failed\n')
         sys.exit(1)
 
     print('Post-processing "' + os.path.basename(output) + '"')
