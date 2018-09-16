@@ -1,0 +1,237 @@
+%PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document http://www.reportlab.com
+1 0 obj
+<<
+/F1 2 0 R /F2 3 0 R /F3 5 0 R /F4 6 0 R
+>>
+endobj
+2 0 obj
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
+endobj
+3 0 obj
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
+endobj
+4 0 obj
+<<
+/Contents 14 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 13 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+5 0 obj
+<<
+/BaseFont /Helvetica-Oblique /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
+endobj
+6 0 obj
+<<
+/BaseFont /Helvetica-BoldOblique /Encoding /WinAnsiEncoding /Name /F4 /Subtype /Type1 /Type /Font
+>>
+endobj
+7 0 obj
+<<
+/Contents 15 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 13 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
+endobj
+8 0 obj
+<<
+/Outlines 10 0 R /PageLabels 16 0 R /PageMode /UseNone /Pages 13 0 R /Type /Catalog
+>>
+endobj
+9 0 obj
+<<
+/Author () /CreationDate (D:20180916181157-03'00') /Creator (doker v0.0.2 - doker.org) /Keywords () /ModDate (D:20180916181157-03'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+  /Subject (\(unspecified\)) /Title (Header & Footer) /Trapped /False
+>>
+endobj
+10 0 obj
+<<
+/Count 3 /First 11 0 R /Last 11 0 R /Type /Outlines
+>>
+endobj
+11 0 obj
+<<
+/Count 1 /Dest [ 7 0 R /XYZ 62.69291 744.6236 0 ] /First 12 0 R /Last 12 0 R /Parent 10 0 R /Title (Abstract)
+>>
+endobj
+12 0 obj
+<<
+/Dest [ 7 0 R /XYZ 62.69291 693.6236 0 ] /Parent 11 0 R /Title (Details)
+>>
+endobj
+13 0 obj
+<<
+/Count 2 /Kids [ 4 0 R 7 0 R ] /Type /Pages
+>>
+endobj
+14 0 obj
+<<
+/Length 339
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 741.0236 cm
+q
+BT 1 0 0 1 0 4 Tm 157.1549 0 Td 24 TL /F2 20 Tf 0 0 0 rg (Header & Footer) Tj T* -157.1549 0 Td ET
+Q
+Q
+q
+1 0 0 1 62.69291 711.0236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 3 Tm /F2 15 Tf 18 TL 204.0974 0 Td (Example) Tj T* -204.0974 0 Td ET
+Q
+Q
+q
+1 0 0 1 62.69291 701.0236 cm
+Q
+ 
+endstream
+endobj
+15 0 obj
+<<
+/Length 1234
+>>
+stream
+1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
+q
+1 0 0 1 62.69291 723.6236 cm
+q
+BT 1 0 0 1 0 3.5 Tm 21 TL /F2 17.5 Tf 0 0 0 rg (Abstract) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 705.6236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Here you may see how header and footer look like.) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 675.6236 cm
+q
+BT 1 0 0 1 0 3 Tm 18 TL /F2 15 Tf 0 0 0 rg (Details) Tj T* ET
+Q
+Q
+q
+1 0 0 1 62.69291 657.6236 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Not bad, isn't it?) Tj T* ET
+Q
+Q
+q
+1 0 0 1 56.69291 764.7969 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+BT 1 0 0 1 0 2.4 Tm 14.4 TL /F2 12 Tf 0 0 0 rg (Abstract) Tj T* ET
+Q
+Q
+q
+1 0 0 1 246.9449 3 cm
+q
+BT 1 0 0 1 0 2.4 Tm 87.54888 0 Td 14.4 TL /F3 12 Tf 0 0 0 rg (Header & Footer ) Tj /F4 12 Tf (Example) Tj T* -87.54888 0 Td ET
+Q
+Q
+q
+1 J
+1 j
+.933333 .933333 .933333 RG
+2.5 w
+n 0 0 m 481.8898 0 l S
+Q
+Q
+q
+1 0 0 1 56.69291 56.69291 cm
+0 0 0 rg
+BT /F1 10 Tf 12 TL ET
+q
+1 0 0 1 6 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F1 10 Tf 12 TL (Copyright \251 2018, Doker Authors) Tj T* ET
+Q
+Q
+q
+1 0 0 1 246.9449 3 cm
+q
+0 0 0 rg
+BT 1 0 0 1 0 2 Tm /F2 10 Tf 12 TL 223.3849 0 Td (2) Tj T* -223.3849 0 Td ET
+Q
+Q
+q
+1 J
+1 j
+.627451 .25098 .25098 RG
+2.5 w
+n 0 18 m 481.8898 18 l S
+Q
+Q
+ 
+endstream
+endobj
+16 0 obj
+<<
+/Nums [ 0 17 0 R 1 18 0 R ]
+>>
+endobj
+17 0 obj
+<<
+/S /D /St 1
+>>
+endobj
+18 0 obj
+<<
+/S /D /St 2
+>>
+endobj
+xref
+0 19
+0000000000 65535 f 
+0000000073 00000 n 
+0000000134 00000 n 
+0000000241 00000 n 
+0000000353 00000 n 
+0000000558 00000 n 
+0000000673 00000 n 
+0000000792 00000 n 
+0000000997 00000 n 
+0000001102 00000 n 
+0000001374 00000 n 
+0000001448 00000 n 
+0000001580 00000 n 
+0000001675 00000 n 
+0000001741 00000 n 
+0000002131 00000 n 
+0000003417 00000 n 
+0000003467 00000 n 
+0000003501 00000 n 
+trailer
+<<
+/ID 
+[<f417ed3d3bdd65162a58b9f75681fc24><f417ed3d3bdd65162a58b9f75681fc24>]
+% ReportLab generated PDF document -- digest (http://www.reportlab.com)
+
+/Info 9 0 R
+/Root 8 0 R
+/Size 19
+>>
+startxref
+3535
+%%EOF

@@ -1,0 +1,42 @@
+pageSetup:
+  spacing-header: 5mm
+  spacing-footer: 5mm
+  firstTemplate: coverPage
+
+pageTemplates:
+  coverPage:
+    margin-left: 10mm
+    margin-right: 10mm
+    frames:
+      - [0cm, 0cm, 100%, 100%]
+
+styles:
+  header:
+    fontSize: 10pt
+
+  header-table:
+    colWidths: [50%, 50%]
+    commands:     
+      - [LINEBELOW, [0, -1], [-1, -1], 2.5, '#EEEEEE']
+
+  header-title:
+    fontName: stdItalic
+    fontSize: 12pt
+    alignment: right
+
+  header-section:
+    fontName: stdBold
+    fontSize: 12pt
+
+  footer-table:
+    colWidths: [50%, 50%]
+    commands:     
+      - [LINEABOVE, [0, 0], [-1, 0], 2.5, '#A04040']
+
+  footer-copyright:
+    fontSize: 10pt
+
+  footer-page:
+    fontName: stdBold
+    fontSize: 10pt
+    alignment: right

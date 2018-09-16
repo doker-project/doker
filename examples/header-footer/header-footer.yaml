@@ -1,0 +1,8 @@
+entry: .
+
+fields:
+  title: Header & Footer
+  subtitle: Example
+
+pdf:
+  stylesheet: stylesheet.yaml

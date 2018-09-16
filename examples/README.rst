@@ -8,7 +8,8 @@ In order to test the example enter to the correspondent directory and run::
 Minimal
 -------
 
-* Description: Generating the minimal PDF document
+Generating the minimal PDF document.
+
 * Project file: `minimal.yaml <minimal/minimal.yaml>`__
 * reStructuredText source file: `main.rst <minimal/main.rst>`__
 * Output: `minimal.pdf <minimal/minimal.pdf>`__
@@ -16,7 +17,8 @@ Minimal
 Styled
 -------
 
-* Description: Generating the PDF document using stylesheet
+Generating the PDF document using stylesheet.
+
 * Project file: `styled.yaml <styled/styled.yaml>`__
 * reStructuredText source file: `main.rst <styled/main.rst>`__
 * Stylesheet file: `stylesheet.yaml <styled/stylesheet.yaml>`__
@@ -25,7 +27,8 @@ Styled
 Cover
 -----
 
-* Description: Generating the PDF document with cover page
+Generating the PDF document with cover page.
+
 * Project file: `cover.yaml <cover/cover.yaml>`__
 * reStructuredText source file: `main.rst <cover/main.rst>`__
 * Cover file: `cover.rst <cover/cover.rst>`__
@@ -35,18 +38,30 @@ Cover
 Fonts
 -----
 
-* Description: Generating the PDF document with custom fonts
+Generating the PDF document with custom fonts.
+
 * Project file: `fonts.yaml <fonts/fonts.yaml>`__
 * reStructuredText source file: `main.rst <fonts/main.rst>`__
 * Fonts install script: `install-fonts.sh <fonts/install-fonts.sh>`__
 * Stylesheet file: `stylesheet.yaml <fonts/stylesheet.yaml>`__
 * Output: `fonts.pdf <fonts/fonts.pdf>`__
 
-TOC
----
+Table of Contents
+-----------------
 
-* Description: Generating the PDF document with table of contents
+Generating the PDF document with table of contents.
+
 * Project file: `toc.yaml <toc/toc.yaml>`__
 * reStructuredText source file: `main.rst <toc/main.rst>`__
 * Stylesheet file: `stylesheet.yaml <toc/stylesheet.yaml>`__
 * Output: `toc.pdf <toc/toc.pdf>`__
+
+Header & Footer 
+---------------
+
+Generating the PDF document with header and footer.
+
+* Project file: `header-footer.yaml <header-footer/header-footer.yaml>`__
+* reStructuredText source file: `main.rst <header-footer/main.rst>`__
+* Stylesheet file: `stylesheet.yaml <header-footer/stylesheet.yaml>`__
+* Output: `header-footer.pdf <header-footer/header-footer.pdf>`__
