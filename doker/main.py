@@ -6,10 +6,9 @@ import os
 import re
 import sys
 import yaml
+from collections import namedtuple
 
-from rst2pdf.extensions import vectorpdf_r2p
-import rst2pdf.image
-from rst2pdf.createpdf import RstToPdf
+from rst2pdf.createpdf import RstToPdf, add_extensions
 
 def file_list2tree(file_list):
     tree = {}
@@ -74,6 +73,11 @@ def preprocess(text, project):
     text += '\n\n'
     return text
 
+def remove_files(file_list):
+    for file in file_list:
+        print('Removing temporary "' + os.path.basename(file) + '"')
+        os.remove(file)
+
 def generate_html(files, project):
     return
 
@@ -83,7 +87,7 @@ def generate_pdf(files, project, output):
 
     # Stylesheet processing
     stylesheets = []
-    if 'stylesheet' in pdf:
+    if pdf and ('stylesheet' in pdf):
         stylesheet = pdf['stylesheet']
         with open(stylesheet, 'r') as f:
             try:
@@ -101,7 +105,7 @@ def generate_pdf(files, project, output):
 
     text = ''
 
-    if 'cover' in pdf:
+    if pdf and ('stylesheet' in pdf):
         with open(pdf['cover'], 'r') as f:
             text += preprocess(f.read(), project)
 
@@ -111,16 +115,21 @@ def generate_pdf(files, project, output):
             text += preprocess(f.read(), project)
 
     # Generating PDF        
+    options = namedtuple('Namespace', 'extensions')
+    options.extensions = ['vectorpdf_r2p']
+    if pdf and ('toc' in pdf):
+        if pdf['toc'] == 'dotted':
+            options.extensions.append('dotted_toc')
+    add_extensions(options)
     print('Generating "' + os.path.basename(output) + '"')
-    rst2pdf.image.VectorPdf = vectorpdf_r2p.VectorPdf # Workaround for PDF processing
     try:
         RstToPdf(
             stylesheets=stylesheets, 
             background_fit_mode='scale'
         ).createPdf(text=text, output=output)
     except Exception as err:
-        #print(err)
         sys.stderr.write('Error: PDF generating failed\n')
+        remove_files(generated)
         sys.exit(1)
 
     print('Post-processing "' + os.path.basename(output) + '"')
@@ -139,9 +148,7 @@ def generate_pdf(files, project, output):
         f.write(re.sub(r'/Creator \(\\\(unspecified\\\)\)', '/Creator (' + creator + ')' , text))
 
     # Temporary files removing
-    for generated_file in generated:
-        print('Removing temporary "' + os.path.basename(generated_file) + '"')
-        os.remove(generated_file)
+    remove_files(generated)
 
 def main():
     try:
