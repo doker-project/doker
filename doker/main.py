@@ -88,8 +88,11 @@ def generate_pdf(files, project, output):
     # Stylesheet processing
     stylesheets = []
     if pdf and ('stylesheet' in pdf):
-        stylesheet = pdf['stylesheet']
-        with open(stylesheet, 'r') as f:
+        stylesheet_file = pdf['stylesheet']
+        if not os.path.isfile(stylesheet_file):
+            sys.stderr.write('Error: Unable to open stylesheet file: ' + stylesheet_file + '\n')
+            sys.exit(1)
+        with open(stylesheet_file, 'r') as f:
             try:
                 style = yaml.load(f)
             except yaml.YAMLError as err:
@@ -105,8 +108,12 @@ def generate_pdf(files, project, output):
 
     text = ''
 
-    if pdf and ('stylesheet' in pdf):
-        with open(pdf['cover'], 'r') as f:
+    if pdf and ('cover' in pdf):
+        cover_file = pdf['cover']
+        if not os.path.isfile(cover_file):
+            sys.stderr.write('Error: Unable to open stylesheet file: ' + cover_file + '\n')
+            sys.exit(1)
+        with open(cover_file, 'r') as f:
             text += preprocess(f.read(), project)
 
     # Text processing
@@ -125,7 +132,8 @@ def generate_pdf(files, project, output):
     try:
         RstToPdf(
             stylesheets=stylesheets, 
-            background_fit_mode='scale'
+            background_fit_mode='scale',
+            breakside=pdf['breakside'] if pdf and ('breakside' in pdf) else 'any',
         ).createPdf(text=text, output=output)
     except Exception as err:
         sys.stderr.write('Error: PDF generating failed\n')
