@@ -48,4 +48,5 @@ TOC
 * Description: Generating the PDF document with table of contents
 * Project file: `toc.yaml <toc/toc.yaml>`__
 * reStructuredText source file: `main.rst <toc/main.rst>`__
+* Stylesheet file: `stylesheet.yaml <toc/stylesheet.yaml>`__
 * Output: `toc.pdf <toc/toc.pdf>`__

@@ -2,3 +2,5 @@ entry: .
 
 pdf:
   toc: dotted
+  stylesheet: stylesheet.yaml
+
