@@ -8,7 +8,7 @@ In order to test the example enter to the correspondent directory and run::
 Minimal
 -------
 
-Generating the minimal PDF document.
+Generate a minimal PDF document.
 
 * Project file: `minimal.yaml <minimal/minimal.yaml>`__
 * reStructuredText source file: `main.rst <minimal/main.rst>`__
@@ -17,7 +17,7 @@ Generating the minimal PDF document.
 Styled
 -------
 
-Generating the PDF document using stylesheet.
+Generate a PDF document using stylesheet.
 
 * Project file: `styled.yaml <styled/styled.yaml>`__
 * reStructuredText source file: `main.rst <styled/main.rst>`__
@@ -27,7 +27,7 @@ Generating the PDF document using stylesheet.
 Cover
 -----
 
-Generating the PDF document with cover page.
+Generate a PDF document with cover page.
 
 * Project file: `cover.yaml <cover/cover.yaml>`__
 * reStructuredText source file: `main.rst <cover/main.rst>`__
@@ -38,7 +38,7 @@ Generating the PDF document with cover page.
 Fonts
 -----
 
-Generating the PDF document with custom fonts.
+Generate a PDF document with custom fonts.
 
 * Project file: `fonts.yaml <fonts/fonts.yaml>`__
 * reStructuredText source file: `main.rst <fonts/main.rst>`__
@@ -49,7 +49,7 @@ Generating the PDF document with custom fonts.
 Table of Contents
 -----------------
 
-Generating the PDF document with table of contents.
+Generate a PDF document with table of contents.
 
 * Project file: `toc.yaml <toc/toc.yaml>`__
 * reStructuredText source file: `main.rst <toc/main.rst>`__
@@ -59,9 +59,19 @@ Generating the PDF document with table of contents.
 Header & Footer 
 ---------------
 
-Generating the PDF document with header and footer.
+Generate a PDF document with header and footer.
 
 * Project file: `header-footer.yaml <header-footer/header-footer.yaml>`__
 * reStructuredText source file: `main.rst <header-footer/main.rst>`__
 * Stylesheet file: `stylesheet.yaml <header-footer/stylesheet.yaml>`__
 * Output: `header-footer.pdf <header-footer/header-footer.pdf>`__
+
+Figures
+-------
+
+Generate a PDF document with figures.
+
+* Project file: `figures.yaml <figures/figures.yaml>`__
+* reStructuredText source file: `main.rst <figures/main.rst>`__
+* Images root: `img <figures/img/>`__
+* Output: `figures.pdf <figures/figures.pdf>`__

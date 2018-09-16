@@ -10,12 +10,17 @@ from collections import namedtuple
 
 from rst2pdf.createpdf import RstToPdf, add_extensions
 
+def file2key(file):
+    key = re.sub(r'^\d+-', '', file) # Remove number at the beginning
+    key = re.sub(r'\..*$', '', key)  # Remove suffix
+    return key
+
 def file_list2tree(file_list):
     tree = {}
     for file in file_list:
         key = re.sub(r'^\d+-', '', file) # Remove number at the beginning
         key = re.sub(r'\..*$', '', key)  # Remove suffix
-        tree[key] = file
+        tree[file2key(file)] = file
     return tree
 
 def file_tree(dir, tree=None):
@@ -27,12 +32,12 @@ def file_tree(dir, tree=None):
         if os.path.isfile(file_path) and not file.endswith('.rst'):
             continue
 
-        key = re.sub(r'^\d+-', '', file) # Remove number at the beginning
-        key = re.sub(r'\..*$', '', key)  # Remove suffix
-
+        key = file2key(file)
         if os.path.isdir(file_path):
             tree[key] = {}
             file_tree(file_path, tree)
+            if not tree[key]:
+                tree.pop(key, None)
         else:
             tree[key] = file_path
 
@@ -66,10 +71,16 @@ def file_list(tree):
   file_tree_branch(tree, None, 0, obj_list)
   return obj_list
 
-def preprocess(text, project):
+def preprocess(text, dir, project):
+    # Substitute fields by values
     if 'fields' in project:
         for field in project['fields']:
-            text = re.sub(r'\#\#\#' + field + r'\#\#\#', str(project['fields'][field]), text, flags=re.IGNORECASE)
+            text = re.sub(r'\#\#\#' + field + r'\#\#\#', str(project['fields'][field]), text, flags=re.I)
+    # Make path to images absolute
+    if 'images-root' in project:
+        dir = os.path.abspath(project['images-root'])
+    text = re.sub(r'((figure|image)::\S*\s+)([\w\/-]+\.(jpg|jpeg|pdf|png|svg))', r'\1'+ dir + r'/\3', text, flags=re.I|re.M)
+    # Add extra EOL
     text += '\n\n'
     return text
 
@@ -106,24 +117,26 @@ def generate_pdf(files, project, output):
         generated.append(stylesheet_json)
         stylesheets.append(stylesheet_json)
 
+    # Text processing
     text = ''
 
+    # Cover page
     if pdf and ('cover' in pdf):
         cover_file = pdf['cover']
         if not os.path.isfile(cover_file):
-            sys.stderr.write('Error: Unable to open stylesheet file: ' + cover_file + '\n')
+            sys.stderr.write('Error: Unable to open cover file: ' + cover_file + '\n')
             sys.exit(1)
         with open(cover_file, 'r') as f:
-            text += preprocess(f.read(), project)
+            text += preprocess(f.read(), os.path.dirname(cover_file), project)
 
-    # Text processing
+    # Main contents processing
     for file in files:
         with open(file['src'], 'r') as f:
-            text += preprocess(f.read(), project)
+            text += preprocess(f.read(), os.path.dirname(file['src']), project)
 
-    # Generating PDF        
+    # Generating PDF
     options = namedtuple('Namespace', 'extensions')
-    options.extensions = ['vectorpdf_r2p']
+    options.extensions = ['inkscape_r2p', 'vectorpdf_r2p']
     if pdf and ('toc' in pdf):
         if pdf['toc'] == 'dotted':
             options.extensions.append('dotted_toc')

@@ -7,6 +7,7 @@ cover \
 fonts \
 toc \
 header-footer \
+figures \
 "
 
 set -e
