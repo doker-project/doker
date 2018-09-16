@@ -1,0 +1,11 @@
+entry: .
+
+pdf:
+  stylesheet: stylesheet.yaml
+
+revisions:
+  - V2 [17.09.2018]:
+    - Removed obsolete
+    - Added content
+  - V1 (10.09.2018):
+    - Initial release

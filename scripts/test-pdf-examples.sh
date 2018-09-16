@@ -8,6 +8,7 @@ fonts \
 toc \
 header-footer \
 figures \
+revisions \
 "
 
 set -e

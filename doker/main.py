@@ -117,6 +117,38 @@ def generate_pdf(files, project, output):
         generated.append(stylesheet_json)
         stylesheets.append(stylesheet_json)
 
+    # Revisions
+    if 'revisions' in project:
+        revisions_text  = '.. list-table:: Revision History\n'
+        revisions_text += '   :class: revisions-table\n'
+        revisions_text += '\n'
+        revisions_text += '   * - Version\n'
+        revisions_text += '     - Date\n'
+        revisions_text += '     - Description\n'
+        
+        revisions = project['revisions']
+        for revision in revisions:
+            if isinstance(revision, dict):
+                key = revision.keys()[0]
+                ver = key
+                date = '--'
+                cap = re.match(r'([\w\d.-:]+)\s+(?:\(|\[)([0-9\w\s./:]+)(?:\)|\])', key)
+                if cap:
+                    ver = cap.group(1)
+                    date =cap.group(2)
+                revisions_text += '   * - **' + str(ver) + '**\n'
+                revisions_text += '     - ' + date + '\n'
+                revisions_text += '     - .. class:: revision-list\n'
+                revisions_text += '\n'
+                changes = revision[key]
+                for change in changes:
+                    revisions_text += '       + ' + change + '\n'
+                    revisions_text += '\n'
+
+        if not 'fields' in project:
+            project['fields'] = {}
+        project['fields']['revisions'] = revisions_text
+
     # Text processing
     text = ''
 
@@ -147,6 +179,7 @@ def generate_pdf(files, project, output):
             stylesheets=stylesheets, 
             background_fit_mode='scale',
             breakside=pdf['breakside'] if pdf and ('breakside' in pdf) else 'any',
+            smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 2),
         ).createPdf(text=text, output=output)
     except Exception as err:
         sys.stderr.write('Error: PDF generating failed\n')

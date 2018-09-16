@@ -1,0 +1,17 @@
+styles:
+  revisions-table:
+    colWidths: [15%, 15%, 70%]
+    spaceBefore: 0
+    commands:
+      - [LINEABOVE, [0, 0], [-1, 0], 2.5, black]
+      - [LINEBELOW, [0, 0], [-1, 0], 2.5, '#A04040']        
+      - [LINEBELOW, [0, -1], [-1, -1], 2.5, black]  
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [TOPPADDING, [0, 0], [-1, -1], 6]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 6]
+      - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EEEEEE']]
+
+  revision-list:
+    parent: bullet-list
+    spaceBefore: 0
+    spaceAfter: 8

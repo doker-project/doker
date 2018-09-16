@@ -75,3 +75,13 @@ Generate a PDF document with figures.
 * reStructuredText source file: `main.rst <figures/main.rst>`__
 * Images root: `img <figures/img/>`__
 * Output: `figures.pdf <figures/figures.pdf>`__
+
+Revisions
+---------
+
+Generate a PDF document with revisions.
+
+* Project file: `revisions.yaml <revisions/revisions.yaml>`__
+* reStructuredText source file: `main.rst <revisions/main.rst>`__
+* Stylesheet file: `stylesheet.yaml <revisions/stylesheet.yaml>`__
+* Output: `revisions.pdf <revisions/revisions.pdf>`__
