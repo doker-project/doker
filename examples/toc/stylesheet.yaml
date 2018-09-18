@@ -1,3 +1,5 @@
+tocColor: black
+
 styles:
   toc1:
     fontSize: 16pt

@@ -82,7 +82,7 @@ endobj
 endobj
 15 0 obj
 <<
-/Author () /CreationDate (D:20180916181156-03'00') /Creator (doker v0.0.2 - doker.org) /Keywords () /ModDate (D:20180916181156-03'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
+/Author () /CreationDate (D:20180918061600-03'00') /Creator (doker v0.0.2 - doker.org) /Keywords () /ModDate (D:20180918061600-03'00') /Producer (ReportLab PDF Library - www.reportlab.com) 
   /Subject (\(unspecified\)) /Title (Document with Table of Contents) /Trapped /False
 >>
 endobj
@@ -113,7 +113,7 @@ endobj
 endobj
 21 0 obj
 <<
-/Length 996
+/Length 972
 >>
 stream
 1 0 0 1 0 0 cm  BT /F1 12 Tf 14.4 TL ET
@@ -144,15 +144,15 @@ BT /F1 10 Tf 12 TL ET
 q
 1 0 0 1 0 23.4 cm
 q
-BT 1 0 0 1 460.9938 3.2 Tm /F2 16 Tf 19.2 TL 0 0 .501961 rg (2) Tj T* ET
-BT 1 0 0 1 0 3.2 Tm 19.2 TL /F2 16 Tf 0 0 .501961 rg (Heading 1) Tj  T* ET
+BT 1 0 0 1 460.9938 3.2 Tm /F2 16 Tf 19.2 TL 0 0 0 rg (2) Tj T* ET
+BT 1 0 0 1 0 3.2 Tm 19.2 TL /F2 16 Tf 0 0 0 rg (Heading 1) Tj  T* ET
 Q
 Q
 q
 1 0 0 1 0 3 cm
 q
-BT 1 0 0 1 82.91376 2.4 Tm /F1 12 Tf 14.4 TL 0 0 .501961 rg ( .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 2) Tj T* ET
-BT 1 0 0 1 20 2.4 Tm 14.4 TL /F1 12 Tf 0 0 .501961 rg (Heading 2) Tj  T* ET
+BT 1 0 0 1 82.91376 2.4 Tm /F1 12 Tf 14.4 TL 0 0 0 rg ( .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  .  . 2) Tj T* ET
+BT 1 0 0 1 20 2.4 Tm 14.4 TL /F1 12 Tf 0 0 0 rg (Heading 2) Tj  T* ET
 Q
 Q
 q
@@ -272,14 +272,14 @@ xref
 0000002684 00000 n 
 0000002782 00000 n 
 0000002849 00000 n 
-0000003896 00000 n 
-0000005223 00000 n 
-0000005273 00000 n 
-0000005307 00000 n 
+0000003872 00000 n 
+0000005199 00000 n 
+0000005249 00000 n 
+0000005283 00000 n 
 trailer
 <<
 /ID 
-[<250dbce66fd89e2eef300dcfd3530137><250dbce66fd89e2eef300dcfd3530137>]
+[<6942e3f0b9854450b2fa5404fabb5253><6942e3f0b9854450b2fa5404fabb5253>]
 % ReportLab generated PDF document -- digest (http://www.reportlab.com)
 
 /Info 15 0 R
@@ -287,5 +287,5 @@ trailer
 /Size 26
 >>
 startxref
-5341
+5317
 %%EOF
