@@ -1,4 +1,4 @@
-0.0.3
-=====
+0.0.4 - 2018-09-18
+------------------
 
-* Initial version
+* Preliminary version
