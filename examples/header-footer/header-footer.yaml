@@ -1,4 +1,4 @@
-entry: .
+root: .
 
 fields:
   title: Header & Footer

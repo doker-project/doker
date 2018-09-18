@@ -8,14 +8,14 @@ Installation
 
 Run in console::
 
-  pip install doker
+  sudo -H pip install doker
 
 Usage
 =====
 
 Create ``minimal.yaml``::
 
-  entry: .
+  root: .
 
 Create ``main.rst``::
 

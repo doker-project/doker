@@ -39,11 +39,11 @@ def main():
             sys.exit(1)
     current_dir = os.getcwd()
     os.chdir(os.path.abspath(os.path.dirname(project_file)))
-    if not 'entry' in project:
-        project['entry'] = '.'
-    entry_dir = os.path.abspath(project['entry'])
+    if not 'root' in project:
+        project['root'] = '.'
+    root_dir = os.path.abspath(project['root'])
 
-    file_tree = fileutils.to_tree(project['files']) if 'files' in project else fileutils.get_tree(entry_dir)
+    file_tree = fileutils.to_tree(project['files']) if 'files' in project else fileutils.get_tree(root_dir)
 
     files = []
     if 'index' in file_tree:
