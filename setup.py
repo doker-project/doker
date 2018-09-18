@@ -1,12 +1,15 @@
 #!/usr/bin/env python
 
+import re
 from os import path 
 from setuptools import find_packages, setup
 
 current_dir = path.abspath(path.dirname(__file__))
 
 with open(path.join(current_dir, 'CHANGELOG.rst'), 'r') as f:
-    __version__ = f.readline().strip()
+    version_string = f.readline().strip()
+cap = re.match(r'(\d+\.\d+\.\d+)', version_string)
+__version__ = cap.group(1) if cap else '0.0.0'
 
 setup(
     name='doker',
