@@ -30,6 +30,7 @@ setup(
         '': ['CHANGELOG.rst', 'LICENSE']
     },
     install_requires = [
+        'docutils',
         'pyyaml',
         'rst2pdf',
     ],

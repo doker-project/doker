@@ -7,7 +7,11 @@ import sys
 import yaml
 from collections import namedtuple
 
+import docutils
+from docutils.parsers.rst import directives
+
 from rst2pdf.createpdf import RstToPdf, add_extensions
+from rst2pdf import pygments_code_block_directive
 
 from doker import fileutils, preprocess
 
@@ -95,6 +99,10 @@ def pdf(files, project, output):
         if pdf['toc'] == 'dotted':
             options.extensions.append('dotted_toc')
     add_extensions(options)
+    directives.register_directive('code-block', pygments_code_block_directive.code_block_directive)
+    directives.register_directive('code', pygments_code_block_directive.code_block_directive)
+    doctree = docutils.core.publish_doctree(text)
+    doctree = preprocess.doctree(doctree, project)
     print('Generating "' + os.path.basename(output) + '"')
     try:
         RstToPdf(
@@ -102,7 +110,7 @@ def pdf(files, project, output):
             background_fit_mode='scale',
             breakside=pdf['breakside'] if pdf and ('breakside' in pdf) else 'any',
             smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 2),
-        ).createPdf(text=text, output=output)
+        ).createPdf(doctree=doctree, output=output)
     except Exception as err:
         sys.stderr.write('Error: PDF generating failed\n')
         fileutils.remove(generated)

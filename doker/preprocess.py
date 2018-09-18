@@ -16,5 +16,11 @@ def common(text, dir, project):
     text += '\n\n'
     return text
 
+def doctree(doctree, project):
+    return doctree
+
 def pdf(text, dir, project):
+    return common(text, dir, project)
+
+def html(text, dir, project):
     return common(text, dir, project)
