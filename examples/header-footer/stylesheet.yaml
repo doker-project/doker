@@ -5,10 +5,8 @@ pageSetup:
 
 pageTemplates:
   coverPage:
-    margin-left: 10mm
-    margin-right: 10mm
-    frames:
-      - [0cm, 0cm, 100%, 100%]
+    showHeader: false
+    showFooter: false
 
 styles:
   header:
