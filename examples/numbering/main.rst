@@ -12,46 +12,61 @@ Example
 Chapter
 =======
 
-This is a first chapter.
+This is a **first** chapter. Reference to table_simple_
 
 Section
 -------
 
-Section 1.
+This is a **first** section of the **first** chapter. Reference to `Second Chapter`_.
 
-Section
--------
+Another Section
+---------------
 
-Section 2.
+This is a **second** section of the **first** chapter. Here is a **table** below.
+
+.. _table_simple:
+.. table:: Simple table
+
+   +----------+--------+
+   |  Table   | Header |
+   +==========+========+
+   | Contents | Text   |
+   +----------+--------+
 
 Paragraph
 ~~~~~~~~~
 
-Paragraph 1.
+This is a **first** paragraph of the **second** section of the **first** chapter.
 
-Section
--------
+Yet Another Section
+-------------------
 
-Section 3.
+This is a **third** section of the **first** chapter.
 
-Chapter
-=======
+Second Chapter
+==============
 
-This is a second chapter.
+This is a **second** chapter. Reference to table_simple_
 
-Section
--------
+Some Section
+------------
 
-Section 1.
+This is a **first** section of the **second** chapter. Reference to figure_logo_
 
-Paragraph
-~~~~~~~~~
+New Paragraph
+~~~~~~~~~~~~~
 
-Paragraph 1.
+This is a **first** paragraph of the **first** section of the **second** chapter. Here is a **figure** below.
 
+.. _figure_logo:
 .. figure:: dk.svg
    :width: 50%
    :align: center
    :alt: Doker Logo
 
    Doker Logo
+
+Last Paragraph
+~~~~~~~~~~~~~~
+
+This is a **second** paragraph of the **first** section of the **second** chapter. Reference to figure_logo_

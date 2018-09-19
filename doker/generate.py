@@ -122,10 +122,10 @@ def pdf(files, project, output):
         __version__ = pkg_resources.get_distribution('doker').version
     except Exception:
         __version__ = None
-    creator = 'doker'
+    creator = 'Doker'
     if __version__:
         creator += ' v' + __version__
-    creator += ' - doker.org'
+    creator += ' \\(doker.org\\)'
     with open(output, 'rb') as f:
         text = f.read()
     with open(output, 'wb') as f:

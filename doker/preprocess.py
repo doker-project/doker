@@ -10,6 +10,7 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
         self.project = project
         self.section_level = 0
         self.storage = {}
+        self.refs = {}
 
     def visit_section(self, node):
         self.section_level += 1
@@ -26,10 +27,35 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
     def visit_figure(self, node):
         n = number('figure', self.project, self.storage)
         if n:
+            if node.hasattr('ids'):
+                for id in node['ids']:
+                    self.refs[id] = n
             for child in node.children:
                 if isinstance(child, docutils.nodes.caption):                    
                     child.children[0] = docutils.nodes.Text(n + ' ' + child.astext())
                     break
+
+    def visit_table(self, node):
+        n = number('table', self.project, self.storage)
+        if n:
+            if node.hasattr('ids'):
+                for id in node['ids']:
+                    self.refs[id] = n
+            for child in node.children:
+                if isinstance(child, docutils.nodes.title):                    
+                    child.children[0] = docutils.nodes.Text(n + ' ' + child.astext())
+                    break
+
+class ReferenceUpdater(docutils.nodes.SparseNodeVisitor):
+    def __init__(self, document, refs):
+        docutils.nodes.SparseNodeVisitor.__init__(self, document)
+        self.refs = refs
+
+    def visit_reference(self, node):
+        if node.hasattr('refid'):
+            refid = node['refid']
+            if refid in self.refs:
+                node.children[0] = docutils.nodes.Text(self.refs[refid])
 
 
 def common(text, dir, project):
@@ -46,8 +72,11 @@ def common(text, dir, project):
     return text
 
 def doctree(doctree, project):
-    e = Emumerator(doctree, project)
-    doctree.walkabout(e)
+    if 'numbering' in project:
+        e = Emumerator(doctree, project)
+        doctree.walkabout(e)
+        ru = ReferenceUpdater(doctree, e.refs)
+        doctree.walk(ru)
     return doctree
 
 def html(text, dir, project):
