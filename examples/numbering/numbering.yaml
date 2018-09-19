@@ -1,7 +1,7 @@
 root: .
 
 numbering:
-  header1: (a+).(b=0)(c=0)(d=0)
-  header2: (a)-(b+)(c=0)
-  header3: (a)/(b)/(c+)
+  heading1: (a+).(b=0)(c=0)(d=0)
+  heading2: (a)-(b+)(c=0)
+  heading3: (a)/(b)/(c+)
   figure: Figure (a).(d+).
