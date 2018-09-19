@@ -85,3 +85,12 @@ Generate a PDF document with revisions.
 * reStructuredText source file: `main.rst <revisions/main.rst>`__
 * Stylesheet file: `stylesheet.yaml <revisions/stylesheet.yaml>`__
 * Output: `revisions.pdf <revisions/revisions.pdf>`__
+
+Numbering
+---------
+
+Generate a PDF document with automatic heading and figures numbering.
+
+* Project file: `numbering.yaml <numbering/numbering.yaml>`__
+* reStructuredText source file: `main.rst <numbering/main.rst>`__
+* Output: `numbering.pdf <numbering/numbering.pdf>`__

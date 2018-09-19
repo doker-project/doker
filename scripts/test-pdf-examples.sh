@@ -9,6 +9,7 @@ toc \
 header-footer \
 figures \
 revisions \
+numbering \
 "
 
 set -e

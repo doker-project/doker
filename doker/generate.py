@@ -58,10 +58,10 @@ def pdf(files, project, output):
                 key = revision.keys()[0]
                 ver = key
                 date = '--'
-                cap = re.match(r'([\w\d.-:]+)\s+(?:\(|\[)([0-9\w\s./:]+)(?:\)|\])', key)
-                if cap:
-                    ver = cap.group(1)
-                    date =cap.group(2)
+                m = re.search(r'([\w\d.-:]+)\s+(?:\(|\[)([0-9\w\s./:]+)(?:\)|\])', key)
+                if m:
+                    ver = m.group(1)
+                    date = m.group(2)
                 revisions_text += '   * - **' + str(ver) + '**\n'
                 revisions_text += '     - ' + date + '\n'
                 revisions_text += '     - .. class:: revision-list\n'
