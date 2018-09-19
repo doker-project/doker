@@ -8,8 +8,8 @@ current_dir = path.abspath(path.dirname(__file__))
 
 with open(path.join(current_dir, 'CHANGELOG.rst'), 'r') as f:
     version_string = f.readline().strip()
-cap = re.match(r'(\d+\.\d+\.\d+)', version_string)
-__version__ = cap.group(1) if cap else '0.0.0'
+m = re.search(r'(\d+\.\d+\.\d+)', version_string)
+__version__ = m.group(1) if m else '0.0.0'
 
 setup(
     name='doker',
