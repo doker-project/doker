@@ -51,8 +51,8 @@ def main():
     files = files + fileutils.to_list(file_tree)
 
     if args.pdf:
-        output_pdf = os.path.splitext(os.path.basename(project_file))[0] + '.pdf'
-        generate.pdf(files, project, os.path.join(current_dir, output_pdf))
+        default_pdf_name = os.path.splitext(os.path.basename(project_file))[0] + '.pdf'
+        generate.pdf(files, project, os.path.join(current_dir, default_pdf_name))
     elif args.html:
         generate.html(files, project)
     #elif 'script' in project:

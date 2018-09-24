@@ -92,6 +92,14 @@ def pdf(files, project, output):
         with open(file['src'], 'r') as f:
             text += preprocess.pdf(f.read(), os.path.dirname(file['src']), project)
 
+    # Output file name processing
+    if pdf and 'output' in pdf:
+        output = os.path.join(pdf['output'], output) if os.path.isdir(pdf['output']) else pdf['output']
+        if not output.endswith('.pdf'):
+            output += '.pdf'
+
+    print(output)
+
     # Generating PDF
     options = namedtuple('Namespace', 'extensions')
     options.extensions = ['inkscape_r2p', 'vectorpdf_r2p']
