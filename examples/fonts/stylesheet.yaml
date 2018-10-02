@@ -38,7 +38,7 @@ styles:
   heading1:
     fontName: PT_Sans-Narrow-Web-Bold
     fontSize: 36pt
-    textColor: '#A04040'
+    textColor: '#9E1F62'
 
   heading2:
     fontName: PT_Sans-Narrow-Web-Bold
