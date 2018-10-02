@@ -21,7 +21,7 @@ styles:
   subtitle:
     fontName: PT_Sans-Narrow-Web-Regular
     fontSize: 30pt
-    textColor: '#A04040'
+    textColor: '#9E1F62'
 
   normal:
     fontName: PTSerif

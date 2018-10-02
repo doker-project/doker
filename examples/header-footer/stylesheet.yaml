@@ -15,7 +15,7 @@ styles:
   header-table:
     colWidths: [50%, 50%]
     commands:     
-      - [LINEBELOW, [0, -1], [-1, -1], 2.5, '#EEEEEE']
+      - [LINEBELOW, [0, -1], [-1, -1], 2.5, '#F8931F']
 
   header-title:
     fontName: stdItalic
@@ -29,7 +29,7 @@ styles:
   footer-table:
     colWidths: [50%, 50%]
     commands:     
-      - [LINEABOVE, [0, 0], [-1, 0], 2.5, '#A04040']
+      - [LINEABOVE, [0, 0], [-1, 0], 2.5, '#9E1F62']
 
   footer-copyright:
     fontSize: 10pt

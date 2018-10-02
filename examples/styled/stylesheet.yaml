@@ -19,5 +19,5 @@ styles:
 
   heading1:
     fontSize: 36pt
-    textColor: '#A04040'
+    textColor: '#9E1F62'
     alignment: right

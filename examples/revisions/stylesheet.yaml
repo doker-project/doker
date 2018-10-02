@@ -4,7 +4,7 @@ styles:
     spaceBefore: 0
     commands:
       - [LINEABOVE, [0, 0], [-1, 0], 2.5, black]
-      - [LINEBELOW, [0, 0], [-1, 0], 2.5, '#A04040']        
+      - [LINEBELOW, [0, 0], [-1, 0], 2.5, '#9E1F62']
       - [LINEBELOW, [0, -1], [-1, -1], 2.5, black]  
       - [VALIGN, [0, 0], [-1, -1], TOP]
       - [TOPPADDING, [0, 0], [-1, -1], 6]
