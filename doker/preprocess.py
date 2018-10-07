@@ -66,6 +66,7 @@ def common(text, dir, project):
     if 'fields' in project:
         for field in project['fields']:
             text = re.sub(r'\#\#\#' + field + r'\#\#\#', str(project['fields'][field]), text, flags=re.I)
+            text = re.sub(r'\#\{' + field + r'\}', str(project['fields'][field]), text, flags=re.I)
     # Make path to images absolute
     if 'images-root' in project:
         dir = os.path.abspath(project['images-root'])
