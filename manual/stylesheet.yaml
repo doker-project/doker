@@ -1,4 +1,5 @@
 pageSetup:
+  size: A4
   margin-top: 10mm
   margin-bottom: 7mm
   margin-left: 15mm
@@ -29,10 +30,22 @@ fontsAlias:
   stdMonoBoldItalic: PTM55FT
 
 tocColor: black
+linkColor: '#9E1F62'
 
 styles:
   base:
     kerning: true
+
+  normal:
+    fontName: PTSerif
+    fontSize: 12pt
+
+  bodytext:
+    spaceAfter: 5
+    leading: 16
+
+  figure-caption:
+    fontName: PT_Sans-Web-Italic
 
   title:
     fontName: PT_Sans-Web-Bold
@@ -48,10 +61,8 @@ styles:
     alignment: left
     spaceBefore: 0
 
-  normal:
-    fontName: PTSerif
-    fontSize: 12pt
-    leading: 16
+  literal:
+    fontSize: 10pt
 
   code:
     backColor: '#EEEEEE'
@@ -62,8 +73,14 @@ styles:
 
   heading1:
     fontName: PT_Sans-Narrow-Web-Bold
-    fontSize: 36pt
-    textColor: '#9E1F62'
+    fontSize: 30pt
+    backColor: '#9E1F62'
+    textColor: white
+    borderWidth: 10
+    borderColor: '#9E1F62'
+    leftIndent: 0
+    rightIndent: 0
+    spaceAfter: 18
 
   heading2:
     fontName: PT_Sans-Narrow-Web-Bold
@@ -152,7 +169,7 @@ styles:
     fontSize: 12pt
 
   footer-table:
-    colWidths: [92%, 8%]
+    colWidths: [null, 8%]
     commands:     
       - [LINEABOVE, [0, 0], [-1, 0], 2, '#9E1F62']
       - [ROWBACKGROUNDS, [1, 0], [1, 0], ['#F8931F']]
@@ -167,14 +184,14 @@ styles:
     alignment: center
 
   revisions-table:
-    parent: table
     colWidths: [15%, 15%, 70%]
     spaceBefore: 0
+    spaceAfter: 24
     commands:
       - [LINEABOVE, [0, 0], [-1, 0], 1, black]
-      - [LINEBELOW, [0, 0], [-1, 0], 1, '#9E1F62']
+      - [LINEBELOW, [0, 0], [-1, 0], 1, '#F8931F']
       - [LINEBELOW, [0, -1], [-1, -1], 1, black]  
-      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [VALIGN, [0, 1], [-1, -1], TOP]
       - [TOPPADDING, [0, 0], [-1, -1], 6]
       - [BOTTOMPADDING, [0, 0], [-1, -1], 6]
       - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EEEEEE']]

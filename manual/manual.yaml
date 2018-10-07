@@ -5,11 +5,10 @@ fields:
   subtitle: User's Manual
 
 numbering:
-  heading1: (c+)(s=0)(p=0)(f=0)(t=0)  # 0 Chapter
-  heading2: (c).(s+)(p=0)             # 0.0 Section
-  heading3: (c).(s).(p+)              # 0.0.0 Paragraph
-  figure:   Figure (c)-(f+)           # Figure 0-0
-  table:    Table (c)-(t+)            # Table 0-0
+  heading1: '[c+][f=0][t=0]' # Chapter
+  figure:   Figure (c)-(f+)  # Figure 0-0
+  table:    Table (c)-(t+)   # Table 0-0
+  delimiter: '.'
 
 pdf:
   output: ../docs/manual.pdf

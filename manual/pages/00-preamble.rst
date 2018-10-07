@@ -29,5 +29,7 @@
 
 #{revisions}
 
+.. section-numbering::
+
 .. contents:: Table of Contents
    :depth: 2
