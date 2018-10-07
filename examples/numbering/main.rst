@@ -33,6 +33,15 @@ This is a **second** section of the **first** chapter. Here is a **table** below
    | Contents | Text   |
    +----------+--------+
 
+.. _unnumbered_table:
+.. table:: Unnumbered table
+
+   +----------+--------+
+   |  Table   | Header |
+   +==========+========+
+   | Contents | Text   |
+   +----------+--------+
+
 Paragraph
 ~~~~~~~~~
 

@@ -30,24 +30,32 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
     def visit_figure(self, node):
         n = number('figure', self.project, self.storage)
         if n:
+            numbered = True
             if node.hasattr('ids'):
                 for id in node['ids']:
                     self.refs[id] = n
-            for child in node.children:
-                if isinstance(child, docutils.nodes.caption):                    
-                    child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
-                    break
+                    if id.startswith('unnumbered'):
+                        numbered = False
+            if numbered:
+                for child in node.children:
+                    if isinstance(child, docutils.nodes.caption):                    
+                        child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
+                        break
 
     def visit_table(self, node):
         n = number('table', self.project, self.storage)
         if n:
+            numbered = True
             if node.hasattr('ids'):
                 for id in node['ids']:
                     self.refs[id] = n
-            for child in node.children:
-                if isinstance(child, docutils.nodes.title):                    
-                    child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
-                    break
+                    if id.startswith('unnumbered'):
+                        numbered = False
+            if numbered:
+                for child in node.children:
+                    if isinstance(child, docutils.nodes.title):                    
+                        child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
+                        break
 
 class ReferenceUpdater(docutils.nodes.SparseNodeVisitor):
     def __init__(self, document, refs):
@@ -92,21 +100,25 @@ def number(tag, project, storage):
         numbering = project['numbering']
         if tag in numbering:
             template = numbering[tag]
-            pattern = r'\(((\w+)(?:([\+\=])(\d+)?)?)\)'
-            m = re.search(pattern, template, re.I)
-            while m:
-                var = m.group(2)
-                operation = m.group(3)
-                operand = m.group(4)
-                value = storage[var] if var in storage else 0
-                if operation == '+':
-                    value += int(operand) if operand else 1
-                elif operation == '=':
-                    value = int(operand) if operand else 0
-                storage[var] = value
-                number = str(value) if operation != '=' else ''
-                template = re.sub(pattern, number, template, 1)                
+            patterns = [r'\(((\w+)(?:([\+\-\=])(\d+)?)?)\)',
+                r'\[((\w+)(?:([\+\-\=])(\d+)?)?)\]',]
+            for pattern in patterns:
                 m = re.search(pattern, template, re.I)
+                while m:
+                    var = m.group(2)
+                    operation = m.group(3)
+                    operand = m.group(4)
+                    value = storage[var] if var in storage else 0
+                    if operation == '+':
+                        value += int(operand) if operand else 1
+                    if operation == '-':
+                        value -= int(operand) if operand else 1
+                    elif operation == '=':
+                        value = int(operand) if operand else 0
+                    storage[var] = value
+                    number = str(value) if pattern.startswith('\(') else ''
+                    template = re.sub(pattern, number, template, 1)                
+                    m = re.search(pattern, template, re.I)
 
             result = template
 
