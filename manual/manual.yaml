@@ -16,7 +16,7 @@ pdf:
   cover: cover.rst
   toc: dotted
   stylesheet: stylesheet.yaml
-  breaklevel: 1
+  break-level: 1
 
 fields:
   title: DOKER

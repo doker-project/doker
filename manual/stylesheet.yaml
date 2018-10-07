@@ -78,7 +78,7 @@ styles:
     wordWrap: null
     commands: 
       - [LINEABOVE, [0, 0], [-1, 0], 1, black]
-      - [LINEBELOW, [0, 0], [-1, 0], 1, '#9E1F62']        
+      - [LINEBELOW, [0, 0], [-1, 0], 1, '#F8931F']        
       - [LINEBELOW, [0, -1], [-1, -1], 1, black]  
       - [VALIGN, [0, 0], [-1, -1], MIDDLE]
       - [TOPPADDING, [0, 0], [-1, -1], 6]
@@ -92,7 +92,7 @@ styles:
 
   table-heading:
     alignment : TA_LEFT
-    backColor: '#F8931F'
+    backColor: '#EEEEEE'
     fontName: PT_Sans-Web-Bold
     fontSize: 14pt
     wordWrap: null
