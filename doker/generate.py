@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-
 import os
 import re
 from collections import namedtuple
@@ -40,6 +39,7 @@ def pdf(files, project, output):
     if 'revisions' in project:
         revisions_text  = '.. list-table:: Revision History\n'
         revisions_text += '   :class: revisions-table\n'
+        revisions_text += '   :header-rows: 1\n'
         revisions_text += '\n'
         revisions_text += '   * - Version\n'
         revisions_text += '     - Date\n'
@@ -117,8 +117,9 @@ def pdf(files, project, output):
     try:
         RstToPdf(
             background_fit_mode='scale',
-            breaklevel=str(pdf['breaklevel'] if pdf and ('breaklevel' in pdf) else None),
-            breakside=pdf['breakside'] if pdf and ('breakside' in pdf) else 'any',
+            breaklevel=str(pdf['break-level'] if pdf and ('break-level' in pdf) else None),
+            breakside=pdf['break-side'] if pdf and ('break-side' in pdf) else 'any',
+            repeat_table_rows=pdf['repeate-table-rows'] if pdf and ('repeate-table-rows' in pdf) else True,
             smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 2),
             stylesheets=stylesheets, 
         ).createPdf(doctree=doctree, output=output)
