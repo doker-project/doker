@@ -11,6 +11,9 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
         self.section_level = 0
         self.storage = {}
         self.refs = {}
+        numbering = project['numbering'] if 'numbering' in project else None
+        self.delimiter = numbering['delimiter'].decode('unicode-escape') if numbering and ('delimiter' in numbering) else ''
+        self.space = numbering['space'].decode('unicode-escape') if numbering and ('space' in numbering) else ' '
 
     def visit_section(self, node):
         self.section_level += 1
@@ -18,7 +21,7 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
         if n:
             for child in node.children:
                 if isinstance(child, docutils.nodes.title):                    
-                    child.children[0] = docutils.nodes.Text(n + ' ' + child.astext())
+                    child.children[0] = docutils.nodes.Text(n + self.space + child.astext())
                     break
 
     def depart_section(self, node):
@@ -32,7 +35,7 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
                     self.refs[id] = n
             for child in node.children:
                 if isinstance(child, docutils.nodes.caption):                    
-                    child.children[0] = docutils.nodes.Text(n + ' ' + child.astext())
+                    child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
                     break
 
     def visit_table(self, node):
@@ -43,7 +46,7 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
                     self.refs[id] = n
             for child in node.children:
                 if isinstance(child, docutils.nodes.title):                    
-                    child.children[0] = docutils.nodes.Text(n + ' ' + child.astext())
+                    child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
                     break
 
 class ReferenceUpdater(docutils.nodes.SparseNodeVisitor):
@@ -94,7 +97,6 @@ def number(tag, project, storage):
                 var = m.group(2)
                 operation = m.group(3)
                 operand = m.group(4)
-                #print('var= '+str(var)+',op= '+str(operation),',opnd= '+str(operand))
                 value = storage[var] if var in storage else 0
                 if operation == '+':
                     value += int(operand) if operand else 1
