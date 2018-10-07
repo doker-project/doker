@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
-import json
+
 import os
 import re
-import sys
-import yaml
 from collections import namedtuple
 
 import docutils
@@ -24,24 +22,19 @@ def pdf(files, project, output):
 
     # Stylesheet processing
     stylesheets = []
-    if pdf and ('stylesheet' in pdf):
-        stylesheet_file = pdf['stylesheet']
-        if not os.path.isfile(stylesheet_file):
-            log.error("Unable to open stylesheet file: '%s'", stylesheet_file)
-            raise FileNotFoundError
-        with open(stylesheet_file, 'r') as f:
-            try:
-                style = yaml.load(f)
-            except yaml.YAMLError as err:
-                log.error("Parsing YAML style file failed: '%s'", err)
-                raise
-
-        stylesheet_json = 'tmp-stylesheet.json'
-        log.info("Generatind temporary '%s'", stylesheet_json)
-        with open(stylesheet_json, 'w') as f:
-            f.write(json.dumps(style))
-        generated.append(stylesheet_json)
-        stylesheets.append(stylesheet_json)
+    try:
+        if pdf and ('stylesheet' in pdf):
+            stylesheet_json = fileutils.stylesheet_to_json(pdf['stylesheet'])
+            generated.append(stylesheet_json)
+            stylesheets.append(stylesheet_json)
+        if pdf and ('stylesheets' in pdf):
+            for stylesheet_file in pdf['stylesheets']:
+                stylesheet_json = fileutils.stylesheet_to_json(stylesheet_file)
+                generated.append(stylesheet_json)
+                stylesheets.append(stylesheet_json)
+    except Exception:
+        fileutils.remove(generated)
+        raise
 
     # Revisions
     if 'revisions' in project:
@@ -52,6 +45,8 @@ def pdf(files, project, output):
         revisions_text += '     - Date\n'
         revisions_text += '     - Description\n'
         
+        last_version = None
+        last_date = None
         revisions = project['revisions']
         for revision in revisions:
             if isinstance(revision, dict):
@@ -62,6 +57,10 @@ def pdf(files, project, output):
                 if m:
                     ver = m.group(1)
                     date = m.group(2)
+                if not last_version:
+                    last_version = ver
+                if not last_date:
+                    last_date = date
                 revisions_text += '   * - **' + str(ver) + '**\n'
                 revisions_text += '     - ' + date + '\n'
                 revisions_text += '     - .. class:: revision-list\n'
@@ -74,6 +73,10 @@ def pdf(files, project, output):
         if not 'fields' in project:
             project['fields'] = {}
         project['fields']['revisions'] = revisions_text
+        if (not 'version' in project['fields']) and last_version:
+            project['fields']['version'] = last_version
+        if (not 'date' in project['fields']) and last_date:
+            project['fields']['date'] = last_date
 
     # Text processing
     text = ''
@@ -83,7 +86,8 @@ def pdf(files, project, output):
         cover_file = pdf['cover']
         if not os.path.isfile(cover_file):
             log.error("Unable to open cover file: '%s'", cover_file)
-            raise FileNotFoundError
+            fileutils.remove(generated)
+            raise IOError('Cover file error')
         with open(cover_file, 'r') as f:
             text += preprocess.pdf(f.read(), os.path.dirname(cover_file), project)
 
@@ -112,10 +116,11 @@ def pdf(files, project, output):
     log.info("Generating '%s'", os.path.basename(output))
     try:
         RstToPdf(
-            stylesheets=stylesheets, 
             background_fit_mode='scale',
+            breaklevel=str(pdf['breaklevel'] if pdf and ('breaklevel' in pdf) else None),
             breakside=pdf['breakside'] if pdf and ('breakside' in pdf) else 'any',
             smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 2),
+            stylesheets=stylesheets, 
         ).createPdf(doctree=doctree, output=output)
     except Exception as err:
         log.error('PDF generating failed')

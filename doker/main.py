@@ -62,7 +62,9 @@ def main():
             log.error('Either PDF (--pdf) or HTML (--html) format should be chosen\n')
             parser.print_help()
             sys.exit(1)
-    except Exception:
+    except Exception as e:
+        if e:
+            log.critical(e)
         sys.exit(1)
 
 # Start

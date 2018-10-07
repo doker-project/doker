@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import logging
 
 logging.basicConfig(format='[%(levelname)s] %(message)s')
@@ -8,6 +10,9 @@ ch = logging.StreamHandler()
 ch.setFormatter(formatter)
 log.addHandler(ch)
 log.propagate = False
+
+def critical(msg, *args, **kwargs):
+    return log.critical(msg, *args, **kwargs)
 
 def error(msg, *args, **kwargs):
     return log.error(msg, *args, **kwargs)

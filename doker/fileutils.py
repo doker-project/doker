@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import json
 import re
 import os
+import yaml
 
+from collections import OrderedDict
 from doker import log
 
 def to_key(file):
@@ -16,9 +19,11 @@ def get_title(src):
     return title
 
 def get_tree(dir, file_tree=None):
-    files = os.listdir(dir)
     if not file_tree:
-        file_tree = {}
+        file_tree = OrderedDict()
+    files = os.listdir(dir)
+    if files:
+        files.sort()
     for file in files:
         file_path = dir + '/' + file
         if os.path.isfile(file_path) and not file.endswith('.rst'):
@@ -39,6 +44,30 @@ def remove(file_list):
     for file in file_list:
         log.info("Removing temporary '%s'", os.path.basename(file))
         os.remove(file)
+
+def stylesheet_to_json(stylesheet_file):
+    if not os.path.isfile(stylesheet_file):
+        log.error("Unable to open stylesheet file: '%s'", stylesheet_file)
+        raise IOError('Stylesheet file error')
+    with open(stylesheet_file, 'r') as f:
+        try:
+            style = yaml.load(f)
+        except yaml.YAMLError as err:
+            log.error("Parsing YAML style file failed: '%s'", err)
+            raise
+
+    stylesheet_name = 'tmp-stylesheet'
+    i = 0
+    while True:
+        stylesheet_json = stylesheet_name + str(i) + '.json'
+        if not os.path.isfile(stylesheet_json):
+            break
+        i += 1
+    log.info("Generating temporary '%s'", stylesheet_json)
+    with open(stylesheet_json, 'w') as f:
+        f.write(json.dumps(style))
+
+    return stylesheet_json
 
 def to_list(file_tree):
   obj_list = []
