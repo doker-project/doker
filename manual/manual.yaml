@@ -14,11 +14,14 @@ numbering:
 pdf:
   output: ../docs/manual.pdf
   cover: cover.rst
-  stylesheets:
-    - ../examples/fonts/stylesheet.yaml
-    - ../examples/cover/stylesheet.yaml
-    - stylesheet.yaml
+  toc: dotted
+  stylesheet: stylesheet.yaml
+  breaklevel: 1
+
+fields:
+  title: DOKER
+  subtitle: User's Manual
 
 revisions:
-  - V0 (22.09.2018):
+  - V0 (07.10.2018):
     - Preliminary release

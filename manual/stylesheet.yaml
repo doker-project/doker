@@ -1,0 +1,185 @@
+pageSetup:
+  margin-top: 10mm
+  margin-bottom: 7mm
+  margin-left: 15mm
+  margin-right: 15mm
+  margin-gutter: 0cm
+  spacing-header: 5mm
+  spacing-footer: 5mm
+  firstTemplate: coverPage
+
+pageTemplates:
+  coverPage:
+    margin-left: 10mm
+    margin-right: 10mm
+    frames:
+      - [0cm, 0cm, 100%, 100%]
+    background: cover_bg.pdf
+
+embeddedFonts:
+  - PTMono
+  - PTSans
+  - PTSansNarrow
+  - PTSerif
+
+fontsAlias:
+  stdMono: PTM55FT
+  stdMonoItalic: PTM55FT
+  stdMonoBold: PTM55FT
+  stdMonoBoldItalic: PTM55FT
+
+tocColor: black
+
+styles:
+  base:
+    kerning: true
+
+  title:
+    fontName: PT_Sans-Web-Bold
+    fontSize: 40pt
+    textColor: white
+    alignment: right
+    spaceBefore: 5
+
+  subtitle:
+    fontName: PT_Sans-Narrow-Web-Regular
+    fontSize: 40pt
+    textColor: black
+    alignment: left
+    spaceBefore: 0
+
+  normal:
+    fontName: PTSerif
+    fontSize: 12pt
+    leading: 16
+
+  code:
+    backColor: '#EEEEEE'
+    borderColor: '#EEEEEE'
+    borderWidth: 2
+    borderRadius: 4
+    borderPadding: 6
+
+  heading1:
+    fontName: PT_Sans-Narrow-Web-Bold
+    fontSize: 36pt
+    textColor: '#9E1F62'
+
+  heading2:
+    fontName: PT_Sans-Narrow-Web-Bold
+    fontSize: 20pt
+
+  heading3:
+    fontName: PT_Sans-Web-BoldItalic
+    fontSize: 16pt
+
+  table:
+    alignment: TA_CENTER
+    wordWrap: null
+    commands: 
+      - [LINEABOVE, [0, 0], [-1, 0], 1, black]
+      - [LINEBELOW, [0, 0], [-1, 0], 1, '#9E1F62']        
+      - [LINEBELOW, [0, -1], [-1, -1], 1, black]  
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [TOPPADDING, [0, 0], [-1, -1], 6]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 6]
+      - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EEEEEE']]
+
+  table-title:
+    fontName: PT_Sans-Web-BoldItalic
+    fontSize: 14pt
+    alignment: left
+
+  table-heading:
+    alignment : TA_LEFT
+    backColor: '#F8931F'
+    fontName: PT_Sans-Web-Bold
+    fontSize: 14pt
+    wordWrap: null
+
+  toc1:
+    fontName: PT_Sans-Narrow-Web-Bold
+    fontSize: 16pt
+
+  toc2:
+    fontName: PTSerif
+    fontSize: 12pt
+
+  # Custom Styles
+
+  cover-table:
+    colWidths: [50%, 50%]
+    spaceBefore: 0
+    commands:
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [RIGHTPADDING, [0, 0], [0, -1], 14]
+      - [LEFTPADDING, [1, 0], [1, -1], 14]
+
+  cover-version-table:
+    parent: table
+    colWidths: [50%, 10%, 40%]
+    commands:
+      - [ALIGN, [0, 0], [-1, -1], CENTER]
+      - [VALIGN, [0, 0], [-1, -1], MIDDLE]
+      - [LEFTPADDING, [1, 0], [1, -1], 20]
+      - [TOPPADDING, [0, 0], [-1, -1], 20]
+
+  cover-date:
+    fontName: PTSans-Web-Bold
+    fontSize: 10pt
+    alignment: left
+
+  cover-version:
+    parent: cover-date
+    borderWidth: 1
+    borderPadding: 5
+    borderColor: black
+    borderRadius: 5
+    alignment: center
+
+  header-table:
+    colWidths: [50%, 50%]
+    commands:     
+      - [LINEBELOW, [0, -1], [-1, -1], 2, '#F8931F']
+
+  header-title:
+    fontName: PT_Sans-Web-Italic
+    fontSize: 12pt
+    alignment: right
+
+  header-section:
+    fontName: PTSans-Web-Bold
+    fontSize: 12pt
+
+  footer-table:
+    colWidths: [92%, 8%]
+    commands:     
+      - [LINEABOVE, [0, 0], [-1, 0], 2, '#9E1F62']
+      - [ROWBACKGROUNDS, [1, 0], [1, 0], ['#F8931F']]
+
+  footer-copyright:
+    fontName: PT_Sans-Narrow-Web-Regular
+    fontSize: 12pt
+
+  footer-page:
+    fontName: PT_Sans-Narrow-Web-Bold
+    fontSize: 12pt
+    alignment: center
+
+  revisions-table:
+    parent: table
+    colWidths: [15%, 15%, 70%]
+    spaceBefore: 0
+    commands:
+      - [LINEABOVE, [0, 0], [-1, 0], 1, black]
+      - [LINEBELOW, [0, 0], [-1, 0], 1, '#9E1F62']
+      - [LINEBELOW, [0, -1], [-1, -1], 1, black]  
+      - [VALIGN, [0, 0], [-1, -1], TOP]
+      - [TOPPADDING, [0, 0], [-1, -1], 6]
+      - [BOTTOMPADDING, [0, 0], [-1, -1], 6]
+      - [ROWBACKGROUNDS, [0, 1], [-1, -1], [white, '#EEEEEE']]
+
+  revision-list:
+    parent: bullet-list
+    spaceBefore: 0
+    spaceAfter: 8
