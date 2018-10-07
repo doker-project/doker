@@ -37,7 +37,8 @@ def pdf(files, project, output):
 
     # Revisions
     if 'revisions' in project:
-        revisions_text  = '.. list-table:: Revision History\n'
+        revisions_text  = '.. _unnumbered_revisions:\n'
+        revisions_text += '.. list-table:: Revision History\n'
         revisions_text += '   :class: revisions-table\n'
         revisions_text += '   :header-rows: 1\n'
         revisions_text += '\n'
@@ -117,10 +118,10 @@ def pdf(files, project, output):
     try:
         RstToPdf(
             background_fit_mode='scale',
-            breaklevel=str(pdf['break-level'] if pdf and ('break-level' in pdf) else None),
+            breaklevel=pdf['break-level'] if pdf and ('break-level' in pdf) else 1,
             breakside=pdf['break-side'] if pdf and ('break-side' in pdf) else 'any',
             repeat_table_rows=pdf['repeate-table-rows'] if pdf and ('repeate-table-rows' in pdf) else True,
-            smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 2),
+            smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 1),
             stylesheets=stylesheets, 
         ).createPdf(doctree=doctree, output=output)
     except Exception as err:
