@@ -1,7 +1,7 @@
 root: pages
 
 fields:
-  title: Doker
+  title: DOKER
   subtitle: User's Manual
 
 numbering:
@@ -16,10 +16,6 @@ pdf:
   toc: dotted
   stylesheet: stylesheet.yaml
   break-level: 1
-
-fields:
-  title: DOKER
-  subtitle: User's Manual
 
 revisions:
   - V0 (07.10.2018):

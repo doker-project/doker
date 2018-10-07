@@ -43,6 +43,7 @@ styles:
   bodytext:
     spaceAfter: 5
     leading: 16
+    alignment: left
 
   figure-caption:
     fontName: PT_Sans-Web-Italic
@@ -62,7 +63,7 @@ styles:
     spaceBefore: 0
 
   literal:
-    fontSize: 10pt
+    fontSize: 11pt
 
   code:
     backColor: '#EEEEEE'
@@ -80,6 +81,7 @@ styles:
     borderColor: '#9E1F62'
     leftIndent: 0
     rightIndent: 0
+    spaceBefore: 12
     spaceAfter: 18
 
   heading2:
