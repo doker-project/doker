@@ -13,7 +13,7 @@ from docutils.parsers.rst import directives
 from rst2pdf.createpdf import RstToPdf, add_extensions
 from rst2pdf import pygments_code_block_directive
 
-from doker import fileutils, preprocess
+from doker import fileutils, preprocess, log
 
 def html(files, project):
     return
@@ -27,17 +27,17 @@ def pdf(files, project, output):
     if pdf and ('stylesheet' in pdf):
         stylesheet_file = pdf['stylesheet']
         if not os.path.isfile(stylesheet_file):
-            sys.stderr.write('Error: Unable to open stylesheet file: ' + stylesheet_file + '\n')
-            sys.exit(1)
+            log.error("Unable to open stylesheet file: '%s'", stylesheet_file)
+            raise FileNotFoundError
         with open(stylesheet_file, 'r') as f:
             try:
                 style = yaml.load(f)
             except yaml.YAMLError as err:
-                sys.stderr.write('Error: Parsing YAML style file failed: ' + err + '\n')
-                sys.exit(1)
+                log.error("Parsing YAML style file failed: '%s'", err)
+                raise
 
         stylesheet_json = 'tmp-stylesheet.json'
-        print('Generatind temporary "' + stylesheet_json + '"')
+        log.info("Generatind temporary '%s'", stylesheet_json)
         with open(stylesheet_json, 'w') as f:
             f.write(json.dumps(style))
         generated.append(stylesheet_json)
@@ -82,8 +82,8 @@ def pdf(files, project, output):
     if pdf and ('cover' in pdf):
         cover_file = pdf['cover']
         if not os.path.isfile(cover_file):
-            sys.stderr.write('Error: Unable to open cover file: ' + cover_file + '\n')
-            sys.exit(1)
+            log.error("Unable to open cover file: '%s'", cover_file)
+            raise FileNotFoundError
         with open(cover_file, 'r') as f:
             text += preprocess.pdf(f.read(), os.path.dirname(cover_file), project)
 
@@ -98,8 +98,6 @@ def pdf(files, project, output):
         if not output.endswith('.pdf'):
             output += '.pdf'
 
-    print(output)
-
     # Generating PDF
     options = namedtuple('Namespace', 'extensions')
     options.extensions = ['inkscape_r2p', 'vectorpdf_r2p']
@@ -111,7 +109,7 @@ def pdf(files, project, output):
     directives.register_directive('code', pygments_code_block_directive.code_block_directive)
     doctree = docutils.core.publish_doctree(text)
     doctree = preprocess.doctree(doctree, project)
-    print('Generating "' + os.path.basename(output) + '"')
+    log.info("Generating '%s'", os.path.basename(output))
     try:
         RstToPdf(
             stylesheets=stylesheets, 
@@ -120,11 +118,11 @@ def pdf(files, project, output):
             smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 2),
         ).createPdf(doctree=doctree, output=output)
     except Exception as err:
-        sys.stderr.write('Error: PDF generating failed\n')
+        log.error('PDF generating failed')
         fileutils.remove(generated)
-        sys.exit(1)
+        raise
 
-    print('Post-processing "' + os.path.basename(output) + '"')
+    log.info("Post-processing '%s'", os.path.basename(output))
     try:
         import pkg_resources
         __version__ = pkg_resources.get_distribution('doker').version

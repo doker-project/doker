@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import re
-import os 
+import os
+
+from doker import log
 
 def to_key(file):
     key = re.sub(r'^\d+-', '', file) # Remove number at the beginning
@@ -35,7 +37,7 @@ def get_tree(dir, file_tree=None):
 
 def remove(file_list):
     for file in file_list:
-        print('Removing temporary "' + os.path.basename(file) + '"')
+        log.info("Removing temporary '%s'", os.path.basename(file))
         os.remove(file)
 
 def to_list(file_tree):

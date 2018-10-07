@@ -5,7 +5,7 @@ import os
 import sys
 import yaml
 
-from doker import fileutils, generate
+from doker import fileutils, generate, log
 
 def main():
     try:
@@ -28,14 +28,14 @@ def main():
     if not os.path.isfile(project_file):
         project_file += '.yaml'
         if not os.path.isfile(project_file):
-            sys.stderr.write('Error: Unable to open project file: ' + project_file + '\n')
+            log.error("Unable to open project file: '%s'", project_file)
             sys.exit(1)
     
     with open(project_file, 'r') as f:
         try:
             project = yaml.load(f)
         except yaml.YAMLError as err:
-            sys.stderr.write('Error: Parsing YAML project file failed: ' + err + '\n')
+            log.error("Parsing YAML project file failed: '%s'", err)
             sys.exit(1)
     current_dir = os.getcwd()
     os.chdir(os.path.abspath(os.path.dirname(project_file)))
@@ -50,16 +50,19 @@ def main():
         files.append({ 'src': file_tree['index'] })
     files = files + fileutils.to_list(file_tree)
 
-    if args.pdf:
-        default_pdf_name = os.path.splitext(os.path.basename(project_file))[0] + '.pdf'
-        generate.pdf(files, project, os.path.join(current_dir, default_pdf_name))
-    elif args.html:
-        generate.html(files, project)
-    #elif 'script' in project:
-        # TODO: Exec the script
-    else:
-        sys.stderr.write('Error: Either PDF (--pdf) or HTML (--html) format should be chosen\n\n')
-        parser.print_help()
+    try:
+        if args.pdf:
+            default_pdf_name = os.path.splitext(os.path.basename(project_file))[0] + '.pdf'
+            generate.pdf(files, project, os.path.join(current_dir, default_pdf_name))
+        elif args.html:
+            generate.html(files, project)
+        #elif 'script' in project:
+            # TODO: Exec the script
+        else:
+            log.error('Either PDF (--pdf) or HTML (--html) format should be chosen\n')
+            parser.print_help()
+            sys.exit(1)
+    except Exception:
         sys.exit(1)
 
 # Start
