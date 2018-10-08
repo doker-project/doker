@@ -78,7 +78,9 @@ def common(text, dir, project):
     # Make path to images absolute
     if 'images-root' in project:
         dir = os.path.abspath(project['images-root'])
-    text = re.sub(r'((figure|image)::\S*\s+)([\w\/-]+\.(jpg|jpeg|pdf|png|svg))', r'\1'+ dir + r'/\3', text, flags=re.I|re.M)
+    dir = dir.replace('\\', '/')
+    text = re.sub(r'((figure|image)::\S*\s+)([\w\d\/\\-]+\.(jpg|jpeg|pdf|png|svg))', r'\1' + dir + r'/\3', text, flags=re.I|re.M)
+
     # Add extra EOL
     text += '\n\n'
     return text
