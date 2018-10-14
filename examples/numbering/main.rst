@@ -79,3 +79,14 @@ Last Paragraph
 ~~~~~~~~~~~~~~
 
 This is a **second** paragraph of the **first** section of the **second** chapter. Reference to figure_logo_
+
+List:
+
+#. First item
+#. Second item. Reference to third_list_item_
+
+Paragraph text.
+
+.. _third_list_item:
+
+#. Third item

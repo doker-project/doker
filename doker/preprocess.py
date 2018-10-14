@@ -1,27 +1,47 @@
 # -*- coding: utf-8 -*-
 
-import docutils
+from docutils import nodes
 import os
 import re
 
-class Emumerator(docutils.nodes.SparseNodeVisitor):
+class Emumerator(nodes.SparseNodeVisitor):
     def __init__(self, document, project):
-        docutils.nodes.SparseNodeVisitor.__init__(self, document)
+        nodes.SparseNodeVisitor.__init__(self, document)
         self.project = project
         self.section_level = 0
+        self.list_level = 0
         self.storage = {}
         self.refs = {}
         numbering = project['numbering'] if 'numbering' in project else None
-        self.delimiter = numbering['delimiter'].decode('unicode-escape') if numbering and ('delimiter' in numbering) else ''
+        self.suffix = numbering['suffix'].decode('unicode-escape') if numbering and ('suffix' in numbering) else None
+
+        self.figure_suffix = numbering['figure-suffix'].decode('unicode-escape') if numbering and ('figure-suffix' in numbering) else None
+        if self.figure_suffix is None:
+            self.figure_suffix = self.suffix
+
+        self.table_suffix = numbering['table-suffix'].decode('unicode-escape') if numbering and ('table-suffix' in numbering) else None
+        if self.table_suffix is None:
+            self.table_suffix = self.suffix
+
+        self.list_suffix = numbering['list-suffix'].decode('unicode-escape') if numbering and ('list-suffix' in numbering) else None
+        if self.list_suffix is None:
+            self.list_suffix = self.suffix
         self.space = numbering['space'].decode('unicode-escape') if numbering and ('space' in numbering) else ' '
+
+    def __process_list_in_children(self, children):
+        for child in children:
+            if isinstance(child, nodes.enumerated_list):
+                self.visit_enumerated_list(child)
+            elif len(child.children):
+                self.__process_list_in_children(child.children)
 
     def visit_section(self, node):
         self.section_level += 1
         n = number('heading' + str(self.section_level), self.project, self.storage)
         if n:
             for child in node.children:
-                if isinstance(child, docutils.nodes.title):                    
-                    child.children[0] = docutils.nodes.Text(n + self.space + child.astext())
+                if isinstance(child, nodes.title):                    
+                    child.children[0] = nodes.Text(n + self.space + child.astext())
                     break
 
     def depart_section(self, node):
@@ -32,14 +52,15 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
         if n:
             numbered = True
             if node.hasattr('ids'):
-                for id in node['ids']:
-                    self.refs[id] = n
-                    if id.startswith('unnumbered'):
+                for node_id in node['ids']:
+                    self.refs[node_id] = n
+                    if node_id.startswith('unnumbered'):
                         numbered = False
             if numbered:
+                suffix = self.figure_suffix if self.figure_suffix != None else ''
                 for child in node.children:
-                    if isinstance(child, docutils.nodes.caption):                    
-                        child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
+                    if isinstance(child, nodes.caption):                    
+                        child.children[0] = nodes.Text(n + suffix + self.space + child.astext())
                         break
 
     def visit_table(self, node):
@@ -47,26 +68,65 @@ class Emumerator(docutils.nodes.SparseNodeVisitor):
         if n:
             numbered = True
             if node.hasattr('ids'):
-                for id in node['ids']:
-                    self.refs[id] = n
-                    if id.startswith('unnumbered'):
+                for node_id in node['ids']:
+                    self.refs[node_id] = n
+                    if node_id.startswith('unnumbered'):
                         numbered = False
             if numbered:
+                suffix = self.table_suffix if self.table_suffix != None else ''
                 for child in node.children:
-                    if isinstance(child, docutils.nodes.title):                    
-                        child.children[0] = docutils.nodes.Text(n + self.delimiter + self.space + child.astext())
+                    if isinstance(child, nodes.title):                    
+                        child.children[0] = nodes.Text(n + suffix + self.space + child.astext())
                         break
 
-class ReferenceUpdater(docutils.nodes.SparseNodeVisitor):
+    def visit_enumerated_list(self, node):
+        children = []
+        for child in node.children:
+            if isinstance(child, nodes.list_item) and len(child.children):
+                children.append(child)
+        if not len(children):
+            return
+        suffix = self.list_suffix if self.list_suffix != None else ''
+        self.list_level += 1
+        n = number('list' + str(self.list_level), self.project, self.storage)
+        if n:
+            if node.hasattr('ids'):
+                for node_id in node['ids']:
+                    self.refs[node_id] = n
+            newnode = nodes.table()
+            newnode['classes'] = ['item-list']
+            tgroup = nodes.tgroup(cols=2)
+            newnode += tgroup
+            tbody = nodes.tbody()
+            tgroup += tbody
+            i = 0
+            for child in children:
+                self.__process_list_in_children(child.children)
+                trow = nodes.row()
+                tbody += trow
+                tentry1 = nodes.entry()
+                trow += tentry1
+                tentry1 += nodes.paragraph(text=n + suffix)
+                tentry2 = nodes.entry()
+                trow += tentry2
+                tentry2 += child.children
+                i += 1
+                if i < len(children):
+                    n = number('list' + str(self.list_level), self.project, self.storage)
+        
+            node.replace_self(newnode)
+        self.list_level -= 1
+
+class ReferenceUpdater(nodes.SparseNodeVisitor):
     def __init__(self, document, refs):
-        docutils.nodes.SparseNodeVisitor.__init__(self, document)
+        nodes.SparseNodeVisitor.__init__(self, document)
         self.refs = refs
 
     def visit_reference(self, node):
         if node.hasattr('refid'):
             refid = node['refid']
             if refid in self.refs:
-                node.children[0] = docutils.nodes.Text(self.refs[refid])
+                node.children[0] = nodes.Text(self.refs[refid])
 
 
 def common(text, dir, project):
@@ -102,8 +162,8 @@ def number(tag, project, storage):
         numbering = project['numbering']
         if tag in numbering:
             template = numbering[tag]
-            patterns = [r'\(((\w+)(?:([\+\-\=])(\d+)?)?)\)',
-                r'\[((\w+)(?:([\+\-\=])(\d+)?)?)\]',]
+            patterns = [r'\(((\w+\d*)(?:([\+\-\=])(\d+)?)?)\)',
+                r'\[((\w+\d*)(?:([\+\-\=])(\d+)?)?)\]',]
             for pattern in patterns:
                 m = re.search(pattern, template, re.I)
                 while m:
