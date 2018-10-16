@@ -90,12 +90,12 @@ def pdf(files, project, output):
             fileutils.remove(generated)
             raise IOError('Cover file error')
         with open(cover_file, 'r') as f:
-            text += preprocess.pdf(f.read(), os.path.dirname(cover_file), project)
+            text += preprocess.pdf(f.read().decode('utf8'), os.path.dirname(cover_file), project)
 
     # Main contents processing
     for file in files:
         with open(file['src'], 'r') as f:
-            text += preprocess.pdf(f.read(), os.path.dirname(file['src']), project)
+            text += preprocess.pdf(f.read().decode('utf8'), os.path.dirname(file['src']), project)
 
     # Output file name processing
     if pdf and 'output' in pdf:
