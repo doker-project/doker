@@ -8,7 +8,7 @@ Installation
 
 Run in console::
 
-  sudo -H pip install doker
+  pip install doker
 
 Usage
 =====
@@ -17,12 +17,14 @@ Create ``minimal.yaml``::
 
   root: .
 
-Create ``main.rst``::
+Create ``main.rst``:
 
-  Minimal Document
-  ================
+.. code:: restructuredtext
 
-  **Hello**, *world*!
+   Minimal Document
+   ================
+
+   **Hello**, *world*!
 
 And run in console::
 
