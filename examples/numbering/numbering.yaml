@@ -7,7 +7,7 @@ numbering:
   figure:   Figure (c).(f+)           # Figure 0.0
   table:    Table (c):(t+)            # Table 0:0
   list1:    (c)|(l+)                  # 0|0 List item
-  suffix: '\xA6'
+  suffix: "\xA6"
   figure-suffix: '.'
   list-suffix: ''
-  space: '\xA0'
+  space: "\xA0"

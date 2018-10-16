@@ -13,20 +13,20 @@ class Emumerator(nodes.SparseNodeVisitor):
         self.storage = {}
         self.refs = {}
         numbering = project['numbering'] if 'numbering' in project else None
-        self.suffix = numbering['suffix'].decode('unicode-escape') if numbering and ('suffix' in numbering) else None
+        self.suffix = numbering['suffix'] if numbering and ('suffix' in numbering) else None
 
-        self.figure_suffix = numbering['figure-suffix'].decode('unicode-escape') if numbering and ('figure-suffix' in numbering) else None
+        self.figure_suffix = numbering['figure-suffix'] if numbering and ('figure-suffix' in numbering) else None
         if self.figure_suffix is None:
             self.figure_suffix = self.suffix
 
-        self.table_suffix = numbering['table-suffix'].decode('unicode-escape') if numbering and ('table-suffix' in numbering) else None
+        self.table_suffix = numbering['table-suffix'] if numbering and ('table-suffix' in numbering) else None
         if self.table_suffix is None:
             self.table_suffix = self.suffix
 
-        self.list_suffix = numbering['list-suffix'].decode('unicode-escape') if numbering and ('list-suffix' in numbering) else None
+        self.list_suffix = numbering['list-suffix'] if numbering and ('list-suffix' in numbering) else None
         if self.list_suffix is None:
             self.list_suffix = self.suffix
-        self.space = numbering['space'].decode('unicode-escape') if numbering and ('space' in numbering) else ' '
+        self.space = numbering['space'] if numbering and ('space' in numbering) else ' '
 
     def __process_list_in_children(self, children):
         for child in children:
@@ -135,8 +135,8 @@ def common(text, dir, project):
     # Substitute fields by values
     if 'fields' in project:
         for field in project['fields']:
-            text = re.sub(r'\#\#\#' + field + r'\#\#\#', str(project['fields'][field]), text, flags=re.I)
-            text = re.sub(r'\#\{' + field + r'\}', str(project['fields'][field]), text, flags=re.I)
+            text = re.sub(r'\#\#\#' + field + r'\#\#\#', unicode(project['fields'][field]), text, flags=re.I)
+            text = re.sub(r'\#\{' + field + r'\}', unicode(project['fields'][field]), text, flags=re.I)
     # Make path to images absolute
     if 'images-root' in project:
         dir = os.path.abspath(project['images-root'])
