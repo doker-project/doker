@@ -106,7 +106,9 @@ class Emumerator(nodes.SparseNodeVisitor):
                 tbody += trow
                 tentry1 = nodes.entry()
                 trow += tentry1
-                tentry1 += nodes.paragraph(text=n + suffix)
+                tpar = nodes.paragraph(text=n + suffix)
+                tpar['classes'] = ['item-list-number']
+                tentry1 += tpar
                 tentry2 = nodes.entry()
                 trow += tentry2
                 tentry2 += child.children
