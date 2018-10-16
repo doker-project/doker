@@ -4,7 +4,7 @@ from docutils import nodes
 import os
 import re
 
-class Emumerator(nodes.SparseNodeVisitor):
+class Enumerator(nodes.SparseNodeVisitor):
     def __init__(self, document, project):
         nodes.SparseNodeVisitor.__init__(self, document)
         self.project = project
@@ -119,6 +119,7 @@ class Emumerator(nodes.SparseNodeVisitor):
             node.replace_self(newnode)
         self.list_level -= 1
 
+
 class ReferenceUpdater(nodes.SparseNodeVisitor):
     def __init__(self, document, refs):
         nodes.SparseNodeVisitor.__init__(self, document)
@@ -129,6 +130,31 @@ class ReferenceUpdater(nodes.SparseNodeVisitor):
             refid = node['refid']
             if refid in self.refs:
                 node.children[0] = nodes.Text(self.refs[refid])
+
+
+class PdfPreprocessor(nodes.SparseNodeVisitor):
+    def __init__(self, document, pdf):
+        nodes.SparseNodeVisitor.__init__(self, document)
+        self.pdf = pdf
+        self.section_level = 0
+        self.list_level = 0
+        self.raw_prefix = pdf['raw-prefix'] if 'raw-prefix' in pdf else None
+
+    def visit_section(self, node):
+        self.section_level += 1
+        if self.raw_prefix:
+            key = 'heading' + str(self.section_level)
+            prefix = self.raw_prefix[key] if key in self.raw_prefix else None
+            if prefix == None:
+                prefix = self.raw_prefix['heading'] if 'heading' in self.raw_prefix else None
+            if prefix != None:
+                i = node.parent.index(node)
+                raw = nodes.raw(text=prefix)
+                raw['format'] = 'pdf'
+                node.parent.insert(i, raw)
+
+    def depart_section(self, node):
+        self.section_level -= 1
 
 
 def common(text, dir, project):
@@ -149,10 +175,15 @@ def common(text, dir, project):
 
 def doctree(doctree, project):
     if 'numbering' in project:
-        e = Emumerator(doctree, project)
+        e = Enumerator(doctree, project)
         doctree.walkabout(e)
         ru = ReferenceUpdater(doctree, e.refs)
         doctree.walk(ru)
+    return doctree
+
+def doctree_pdf(doctree, pdf):
+    pp = PdfPreprocessor(doctree, pdf)
+    doctree.walkabout(pp)
     return doctree
 
 def html(text, dir, project):

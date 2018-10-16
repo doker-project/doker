@@ -114,6 +114,8 @@ def pdf(files, project, output):
     directives.register_directive('code', pygments_code_block_directive.code_block_directive)
     doctree = docutils.core.publish_doctree(text)
     doctree = preprocess.doctree(doctree, project)
+    if pdf:
+        doctree = preprocess.doctree_pdf(doctree, pdf)
     log.info("Generating '%s'", os.path.basename(output))
     try:
         RstToPdf(
