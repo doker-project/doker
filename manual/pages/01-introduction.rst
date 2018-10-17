@@ -13,7 +13,6 @@ Doker vs. rst2pdf
 Comparing to rst2pdf Doker has following features:
 
 * Generating PDF from multiple sources
-* Figures and tables enumerating
-* Support for advanced section numbering
+* Support for advanced numeratino of sections, figures, tables, list items
 * Support for replaceable fields
 * Automatic revision history table generating

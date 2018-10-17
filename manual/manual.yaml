@@ -5,10 +5,13 @@ fields:
   subtitle: User's Manual
 
 numbering:
-  heading1: '[c+][f=0][t=0]' # Chapter
-  figure:   Figure (c)-(f+)  # Figure 0-0
-  table:    Table (c)-(t+)   # Table 0-0
-  delimiter: '.'
+  heading1: '[c+][f=0][t=0][l1=0]' # Chapter
+  figure:   Figure (c)-(f+)        # Figure 0-0
+  table:    Table (c)-(t+)         # Table 0-0
+  list1:    (c).(l1+)[l2=0][l3=0]  # 0.0 List 1
+  list2:    (c).(l1).(l2+)[l3=0]   # 0.0.0 List 2
+  list3:    (c).(l1).(l2).(l3+)    # 0.0.0.0 List 3
+  suffix: '.'
 
 pdf:
   output: ../docs/manual.pdf
@@ -18,5 +21,5 @@ pdf:
   break-level: 1
 
 revisions:
-  - V0 (07.10.2018):
+  - V0 (17.10.2018):
     - Preliminary release

@@ -124,6 +124,17 @@ styles:
     fontName: PTSerif
     fontSize: 12pt
 
+  item-list:
+    colWidths: [1.5cm, null]
+
+  item-list-number:
+    borderWidth: 2
+    borderRadius: 5
+    textColor: white
+    borderColor: '9E1F62'
+    backColor: '9E1F62'
+    alignment: TA_CENTER
+
   # Custom Styles
 
   cover-table:
