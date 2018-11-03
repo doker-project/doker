@@ -13,11 +13,11 @@ numbering \
 "
 
 set -e
-cd "$(dirname "$(readlink -f "${0}")")"/../examples
+cd "$(dirname "$(readlink -f "${0}")")"/../examples/pdf
 
 for EXAMPLE in $EXAMPLES
 do
   cd $EXAMPLE
-  ../../doker/main.py --pdf $EXAMPLE
+  ../../../doker/main.py --pdf $EXAMPLE
   cd ..
 done
