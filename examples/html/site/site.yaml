@@ -1,0 +1,5 @@
+root: pages
+
+html:
+  templates-root: templates
+  output: output

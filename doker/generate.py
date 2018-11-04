@@ -2,17 +2,57 @@
 
 import os
 import re
+import yaml
+
 from collections import namedtuple
 
 import docutils
 from docutils.parsers.rst import directives
+
+from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
 from rst2pdf.createpdf import RstToPdf, add_extensions
 from rst2pdf import pygments_code_block_directive
 
 from doker import fileutils, preprocess, log
 
-def html(files, project):
+def html(files, project, output):
+    html = project['html'] if 'html' in project else None
+
+    if html and 'output' in html:
+        output = os.path.join(os.getcwd(), html['output'])
+        if not os.path.exists(output):
+            os.makedirs(output)
+
+    templates_root = os.getcwd()
+    if html and 'templates-root' in html:
+        templates_root = os.path.join(templates_root, html['templates-root'])
+    templates = Environment(loader=FileSystemLoader(templates_root))
+
+    for file in files:
+        with open(file['src'], 'r') as f:
+            try:
+                page = yaml.load(f)
+            except yaml.YAMLError as err:
+                log.error("Parsing YAML page file failed: '%s'", err)
+                raise
+        if not 'template' in page:
+            log.warning("No template in page '%s'", file['src'])
+            continue
+
+        try:
+            template = templates.get_template(page['template'])
+        except TemplateNotFound as err:
+            log.error("Template not found: '%s'", err)
+            raise
+
+        html_dir = os.path.join(output, file['path'])
+        if not os.path.exists(html_dir):
+            os.makedirs(html_dir)
+        html_path = os.path.join(html_dir, 'index.html')
+        log.info("Generating '%s'", html_path)
+        with open(html_path, 'w') as f:
+            f.write(template.render(page))
     return
 
 def pdf(files, project, output):
@@ -45,7 +85,7 @@ def pdf(files, project, output):
         revisions_text += '   * - Version\n'
         revisions_text += '     - Date\n'
         revisions_text += '     - Description\n'
-        
+
         last_version = None
         last_date = None
         revisions = project['revisions']
@@ -124,10 +164,10 @@ def pdf(files, project, output):
             breakside=pdf['break-side'] if pdf and ('break-side' in pdf) else 'any',
             repeat_table_rows=pdf['repeate-table-rows'] if pdf and ('repeate-table-rows' in pdf) else True,
             smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 1),
-            stylesheets=stylesheets, 
+            stylesheets=stylesheets,
         ).createPdf(doctree=doctree, output=output)
     except Exception as err:
-        log.error('PDF generating failed')
+        log.error("PDF generating failed: %s", err)
         fileutils.remove(generated)
         raise
 

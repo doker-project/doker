@@ -30,7 +30,7 @@ def main():
         if not os.path.isfile(project_file):
             log.error("Unable to open project file: '%s'", project_file)
             sys.exit(1)
-    
+
     with open(project_file, 'r') as f:
         try:
             project = yaml.load(f)
@@ -39,15 +39,18 @@ def main():
             sys.exit(1)
     current_dir = os.getcwd()
     os.chdir(os.path.abspath(os.path.dirname(project_file)))
+    if not project:
+        project = {}
     if not 'root' in project:
         project['root'] = '.'
     root_dir = os.path.abspath(project['root'])
 
-    file_tree = fileutils.to_tree(project['files']) if 'files' in project else fileutils.get_tree(root_dir)
+    file_type = '.rst' if args.pdf else ('.yaml' if args.html else '')
+    file_tree = fileutils.to_tree(project['files']) if 'files' in project else fileutils.get_tree(root_dir, file_type)
 
     files = []
     if 'index' in file_tree:
-        files.append({ 'src': file_tree['index'] })
+        files.append({ 'path': '', 'src': file_tree['index'] })
     files = files + fileutils.to_list(file_tree)
 
     try:
@@ -55,7 +58,7 @@ def main():
             default_pdf_name = os.path.splitext(os.path.basename(project_file))[0] + '.pdf'
             generate.pdf(files, project, os.path.join(current_dir, default_pdf_name))
         elif args.html:
-            generate.html(files, project)
+            generate.html(files, project, current_dir)
         #elif 'script' in project:
             # TODO: Exec the script
         else:

@@ -18,23 +18,20 @@ def get_title(src):
         title = f.readline().strip()
     return title
 
-def get_tree(dir, file_tree=None):
-    if not file_tree:
-        file_tree = OrderedDict()
+def get_tree(dir, file_type=''):
+    file_tree = OrderedDict()
     files = os.listdir(dir)
     if files:
         files.sort()
     for file in files:
         file_path = dir + '/' + file
-        if os.path.isfile(file_path) and not file.endswith('.rst'):
+        if os.path.isfile(file_path) and not file.endswith(file_type):
             continue
 
         key = to_key(file)
+        # TODO: Fix when 'key' is already exists in 'file_tree'
         if os.path.isdir(file_path):
-            file_tree[key] = {}
-            get_tree(file_path, file_tree)
-            if not file_tree[key]:
-                file_tree.pop(key, None)
+            file_tree[key] = get_tree(file_path, file_type)
         else:
             file_tree[key] = file_path
 
@@ -85,11 +82,14 @@ def tree_branch(file_tree, dir, level, obj_list):
     for k in file_tree.keys():
         v = file_tree[k]
         obj = {'path' : (dir + '/' + k) if dir else k, 'level': level + 1 }
-        if isinstance(v, dict):
-            obj['src'] = v['index']
-            obj['title'] = get_title(obj['src'])
-            obj_list.append(obj)
-            obj.children = tree_branch(v, obj['path'], obj['level'], obj_list)
+        if isinstance(v, OrderedDict):
+            if 'index' in v:
+                obj['src'] = v['index']
+                obj['title'] = get_title(obj['src'])
+                obj_list.append(obj)
+                obj['children'] = tree_branch(v, obj['path'], obj['level'], obj_list)
+            else:
+                tree_branch(v, obj['path'], obj['level'], obj_list)
         elif k != 'index':
             obj['src'] = v
             obj['title'] = get_title(obj['src'])

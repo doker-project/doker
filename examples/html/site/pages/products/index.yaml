@@ -1,0 +1,8 @@
+title: Products
+template: products.jinja
+
+products:
+  - product1
+
+scripts:
+  products: products.py

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import re
-from os import path 
+from os import path
 from setuptools import find_packages, setup
 
 current_dir = path.abspath(path.dirname(__file__))
@@ -34,6 +34,7 @@ setup(
     },
     install_requires = [
         'docutils',
+        'Jinja2',
         'pyyaml',
         'rst2pdf',
     ],
