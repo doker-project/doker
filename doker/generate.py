@@ -16,19 +16,43 @@ from rst2pdf import pygments_code_block_directive
 
 from doker import fileutils, preprocess, log
 
+def rst2html(file_path, project):
+    settings = {
+        'stylesheet': '',
+        'stylesheet_path': [],
+        'xml_declaration': '',
+        'doctype_declaration': 0
+    }
+    with open(file_path, 'r') as f:
+        doctree = docutils.core.publish_doctree(preprocess.html(f.read(), os.path.dirname(file_path), project))
+    doctree = preprocess.doctree(doctree, project)
+    html = docutils.core.publish_from_doctree(doctree, writer_name='html', settings_overrides=settings)
+
+    # Remove common HTML preface
+    html = re.sub(r'^[\s\S]*\<body\>', '', html, re.I | re.M)
+    # Remove common HTML ending
+    html = re.sub(r'<\/body\>[\s\S]*\<\/html\>$', '', html, re.I | re.M)
+    # Parse external links
+    html = re.sub(r'(<a)(.*href="http[^>]+)>', r'\1 class="ext"\2 target="_blank">', html, re.I)
+
+    return html
+
 def html(files, project, output):
     html = project['html'] if 'html' in project else None
 
+    # Output path processing
     if html and 'output' in html:
         output = os.path.join(os.getcwd(), html['output'])
         if not os.path.exists(output):
             os.makedirs(output)
 
+    # Templates root directory
     templates_root = os.getcwd()
     if html and 'templates-root' in html:
         templates_root = os.path.join(templates_root, html['templates-root'])
     templates = Environment(loader=FileSystemLoader(templates_root))
 
+    # Main processing
     for file in files:
         with open(file['src'], 'r') as f:
             try:
@@ -39,6 +63,16 @@ def html(files, project, output):
         if not 'template' in page:
             log.warning("No template in page '%s'", file['src'])
             continue
+
+        # Blocks processing
+        if 'blocks' in page:
+            blocks = page['blocks']
+            for k in blocks.keys():
+                v = blocks[k]
+                block_path = os.path.join(os.path.dirname(file['src']), v)
+                if block_path.endswith('.rst'):
+                    block = rst2html(block_path, project)
+                    blocks[k] = block
 
         try:
             template = templates.get_template(page['template'])

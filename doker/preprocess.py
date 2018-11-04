@@ -40,7 +40,7 @@ class Enumerator(nodes.SparseNodeVisitor):
         n = number('heading' + str(self.section_level), self.project, self.storage)
         if n:
             for child in node.children:
-                if isinstance(child, nodes.title):                    
+                if isinstance(child, nodes.title):
                     child.children[0] = nodes.Text(n + self.space + child.astext())
                     break
 
@@ -59,7 +59,7 @@ class Enumerator(nodes.SparseNodeVisitor):
             if numbered:
                 suffix = self.figure_suffix if self.figure_suffix != None else ''
                 for child in node.children:
-                    if isinstance(child, nodes.caption):                    
+                    if isinstance(child, nodes.caption):
                         child.children[0] = nodes.Text(n + suffix + self.space + child.astext())
                         break
 
@@ -75,7 +75,7 @@ class Enumerator(nodes.SparseNodeVisitor):
             if numbered:
                 suffix = self.table_suffix if self.table_suffix != None else ''
                 for child in node.children:
-                    if isinstance(child, nodes.title):                    
+                    if isinstance(child, nodes.title):
                         child.children[0] = nodes.Text(n + suffix + self.space + child.astext())
                         break
 
@@ -115,7 +115,7 @@ class Enumerator(nodes.SparseNodeVisitor):
                 i += 1
                 if i < len(children):
                     n = number('list' + str(self.list_level), self.project, self.storage)
-        
+
             node.replace_self(newnode)
         self.list_level -= 1
 
@@ -212,7 +212,7 @@ def number(tag, project, storage):
                         value = int(operand) if operand else 0
                     storage[var] = value
                     number = str(value) if pattern.startswith('\(') else ''
-                    template = re.sub(pattern, number, template, 1)                
+                    template = re.sub(pattern, number, template, 1)
                     m = re.search(pattern, template, re.I)
 
             result = template

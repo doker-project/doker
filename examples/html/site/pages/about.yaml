@@ -1,5 +1,5 @@
 title: About
 template: page.jinja
 
-content:
-  abstract: about/abstract.rst
+blocks:
+  body: about/body.rst

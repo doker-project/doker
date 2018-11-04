@@ -13,11 +13,6 @@ def to_key(file):
     key = re.sub(r'\..*$', '', key)  # Remove suffix
     return key
 
-def get_title(src):
-    with open(src, 'r') as f:
-        title = f.readline().strip()
-    return title
-
 def get_tree(dir, file_type=''):
     file_tree = OrderedDict()
     files = os.listdir(dir)
@@ -85,14 +80,12 @@ def tree_branch(file_tree, dir, level, obj_list):
         if isinstance(v, OrderedDict):
             if 'index' in v:
                 obj['src'] = v['index']
-                obj['title'] = get_title(obj['src'])
                 obj_list.append(obj)
                 obj['children'] = tree_branch(v, obj['path'], obj['level'], obj_list)
             else:
                 tree_branch(v, obj['path'], obj['level'], obj_list)
         elif k != 'index':
             obj['src'] = v
-            obj['title'] = get_title(obj['src'])
             obj_list.append(obj)
             children.append(obj)
 
