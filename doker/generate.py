@@ -8,6 +8,7 @@ from collections import namedtuple
 
 import docutils
 from docutils.parsers.rst import directives
+from docutils.writers.odf_odt import Writer
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
@@ -88,6 +89,28 @@ def html(files, project, output):
         with open(html_path, 'w') as f:
             f.write(template.render(page))
     return
+
+def odt(files, project, output):
+    # Text processing
+    text = ''
+
+    # Main contents processing
+    for file in files:
+        with open(file['src'], 'r') as f:
+            text += preprocess.odt(f.read().decode('utf8'), os.path.dirname(file['src']), project)
+
+    # Generating ODT
+    doctree = docutils.core.publish_doctree(text)
+    doctree = preprocess.doctree(doctree, project)
+    log.info("Generating '%s'", os.path.basename(output))
+
+    writer = Writer()
+    settings = {
+        'stylesheet': '', # FIXME: Point to valid ODT template 
+    }
+    odt = docutils.core.publish_from_doctree(doctree, writer=writer, settings_overrides=settings)
+    with open(output, 'w') as f:
+        f.write(odt)
 
 def pdf(files, project, output):
     generated = []

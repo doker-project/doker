@@ -219,5 +219,8 @@ def number(tag, project, storage):
 
     return result
 
+def odt(text, dir, project):
+    return common(text, dir, project)
+
 def pdf(text, dir, project):
     return common(text, dir, project)

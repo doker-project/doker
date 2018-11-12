@@ -19,8 +19,9 @@ def main():
     parser.add_argument('project', metavar='<project>', help='Project file in YAML format')
     parser.add_argument('-h', '--help', action='help', help='Show this help message and exit')
     parser.add_argument('-V', '--version', action='version', version='%(prog)s ' + __version__, help='Show version and exit')
-    parser.add_argument('--pdf', action="store_true", help='Generate documentation in PDF format')
-    parser.add_argument('--html', action="store_true", help='Generate documentation in HTML format')
+    parser.add_argument('--pdf', action="store_true", help='Generate documentation in  Portable Document Format (PDF)')
+    parser.add_argument('--html', action="store_true", help='Generate documentation in Hypertext Markup Language (HTML) format')
+    parser.add_argument('--odt', action="store_true", help='Generate documentation in Open Document Text (ODT) format')
 
     args = parser.parse_args()
     project_file = args.project
@@ -45,7 +46,7 @@ def main():
         project['root'] = '.'
     root_dir = os.path.abspath(project['root'])
 
-    file_type = '.rst' if args.pdf else ('.yaml' if args.html else '')
+    file_type = '.rst' if (args.pdf or args.odt)  else ('.yaml' if args.html else '')
     file_tree = fileutils.to_tree(project['files']) if 'files' in project else fileutils.get_tree(root_dir, file_type)
 
     files = []
@@ -59,6 +60,9 @@ def main():
             generate.pdf(files, project, os.path.join(current_dir, default_pdf_name))
         elif args.html:
             generate.html(files, project, current_dir)
+        elif args.odt:
+            default_odt_name = os.path.splitext(os.path.basename(project_file))[0] + '.odt'
+            generate.odt(files, project, os.path.join(current_dir, default_odt_name))
         #elif 'script' in project:
             # TODO: Exec the script
         else:
