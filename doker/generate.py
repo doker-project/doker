@@ -91,6 +91,8 @@ def html(files, project, output):
     return
 
 def odt(files, project, output):
+    odt = project['odt'] if 'odt' in project else None
+
     # Text processing
     text = ''
 
@@ -104,13 +106,14 @@ def odt(files, project, output):
     doctree = preprocess.doctree(doctree, project)
     log.info("Generating '%s'", os.path.basename(output))
 
-    writer = Writer()
-    settings = {
-        'stylesheet': '', # FIXME: Point to valid ODT template 
-    }
-    odt = docutils.core.publish_from_doctree(doctree, writer=writer, settings_overrides=settings)
+    settings = {}
+    if odt and 'stylesheet' in odt:
+        settings['stylesheet'] = odt['stylesheet']
+
+    odt_writer = Writer()
+    odt_contents = docutils.core.publish_from_doctree(doctree, writer=odt_writer, settings_overrides=settings)
     with open(output, 'w') as f:
-        f.write(odt)
+        f.write(odt_contents)
 
 def pdf(files, project, output):
     generated = []
