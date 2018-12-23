@@ -30,13 +30,17 @@ setup(
         "Operating System :: OS Independent",
     ],
     package_data={
+        'doker': ['rst2pdf/styles/*.json', 'rst2pdf/styles/*.style', 'rst2pdf/images/*png', 'rst2pdf/images/*jpg', 'rst2pdf/templates/*tmpl'],
         '': ['CHANGELOG.rst', 'LICENSE']
     },
     install_requires = [
         'docutils',
         'Jinja2',
         'pyyaml',
-        'rst2pdf',
+        'reportlab>=2.4',
+        'Pygments',
+        'pdfrw',
+        'pillow',
     ],
 )
 

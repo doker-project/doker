@@ -3,6 +3,7 @@
 from docutils import nodes
 import os
 import re
+import sys
 
 class Enumerator(nodes.SparseNodeVisitor):
     def __init__(self, document, project):
@@ -161,8 +162,8 @@ def common(text, dir, project):
     # Substitute fields by values
     if 'fields' in project:
         for field in project['fields']:
-            text = re.sub(r'\#\#\#' + field + r'\#\#\#', unicode(project['fields'][field]), text, flags=re.I)
-            text = re.sub(r'\#\{' + field + r'\}', unicode(project['fields'][field]), text, flags=re.I)
+            text = re.sub(r'\#\#\#' + field + r'\#\#\#', tostring(project['fields'][field]), text, flags=re.I)
+            text = re.sub(r'\#\{' + field + r'\}', tostring(project['fields'][field]), text, flags=re.I)
     # Make path to images absolute
     if 'images-root' in project:
         dir = os.path.abspath(project['images-root'])
@@ -224,3 +225,10 @@ def odt(text, dir, project):
 
 def pdf(text, dir, project):
     return common(text, dir, project)
+
+def tostring(src):
+    if sys.version_info[0] < 3:
+        text = unicode(src)
+    else:
+        text = str(src)
+    return text

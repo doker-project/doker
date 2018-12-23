@@ -3,10 +3,11 @@
 import json
 import re
 import os
+import sys
 import yaml
 
 from collections import OrderedDict
-from doker import log
+from . import log
 
 def to_key(file):
     key = re.sub(r'^\d+-', '', file) # Remove number at the beginning
@@ -31,6 +32,15 @@ def get_tree(dir, file_type=''):
             file_tree[key] = file_path
 
     return file_tree
+
+def readfile(filename):
+    if sys.version_info[0] < 3:
+        with open(filename, 'r') as f:
+            text = f.read().decode('utf8')
+    else:
+        with open(filename, 'r', encoding='utf8') as f:
+            text = f.read()
+    return text
 
 def remove(file_list):
     for file in file_list:

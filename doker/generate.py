@@ -12,10 +12,10 @@ from docutils.writers.odf_odt import Writer
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 
-from rst2pdf.createpdf import RstToPdf, add_extensions
-from rst2pdf import pygments_code_block_directive
+from .rst2pdf.createpdf import RstToPdf, add_extensions
+from .rst2pdf import pygments_code_block_directive
 
-from doker import fileutils, preprocess, log
+from . import fileutils, preprocess, log
 
 def rst2html(file_path, project):
     settings = {
@@ -85,9 +85,14 @@ def html(files, project, output):
         if not os.path.exists(html_dir):
             os.makedirs(html_dir)
         html_path = os.path.join(html_dir, 'index.html')
-        log.info("Generating '%s'", html_path)
-        with open(html_path, 'w') as f:
-            f.write(template.render(page))
+        log.info("Generating '%s'", os.path.abspath(html_path))
+        print(page)
+        print(template)
+        try:
+            with open(html_path, 'w') as f:
+                f.write(template.render(page))
+        except Exception as e:
+            print(e)
     return
 
 def odt(files, project, output):
@@ -151,7 +156,7 @@ def pdf(files, project, output):
         revisions = project['revisions']
         for revision in revisions:
             if isinstance(revision, dict):
-                key = revision.keys()[0]
+                key = list(revision.keys())[0]
                 ver = key
                 date = '--'
                 m = re.search(r'([\w\d.-:]+)\s+(?:\(|\[)([0-9\w\s./:]+)(?:\)|\])', key)
@@ -189,13 +194,11 @@ def pdf(files, project, output):
             log.error("Unable to open cover file: '%s'", cover_file)
             fileutils.remove(generated)
             raise IOError('Cover file error')
-        with open(cover_file, 'r') as f:
-            text += preprocess.pdf(f.read().decode('utf8'), os.path.dirname(cover_file), project)
+        text += preprocess.pdf(fileutils.readfile(cover_file), os.path.dirname(cover_file), project)
 
     # Main contents processing
     for file in files:
-        with open(file['src'], 'r') as f:
-            text += preprocess.pdf(f.read().decode('utf8'), os.path.dirname(file['src']), project)
+        text += preprocess.pdf(fileutils.readfile(file['src']), os.path.dirname(file['src']), project)
 
     # Output file name processing
     if pdf and 'output' in pdf:
@@ -205,7 +208,7 @@ def pdf(files, project, output):
 
     # Generating PDF
     options = namedtuple('Namespace', 'extensions')
-    options.extensions = ['inkscape_r2p', 'vectorpdf_r2p']
+    options.extensions = ['inkscape', 'vectorpdf']
     if pdf and ('toc' in pdf):
         if pdf['toc'] == 'dotted':
             options.extensions.append('dotted_toc')
