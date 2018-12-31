@@ -86,13 +86,9 @@ def html(files, project, output):
             os.makedirs(html_dir)
         html_path = os.path.join(html_dir, 'index.html')
         log.info("Generating '%s'", os.path.abspath(html_path))
-        print(page)
-        print(template)
-        try:
-            with open(html_path, 'w') as f:
-                f.write(template.render(page))
-        except Exception as e:
-            print(e)
+        with open(html_path, 'w') as f:
+            f.write(template.render(page))
+
     return
 
 def odt(files, project, output):
@@ -147,27 +143,27 @@ def pdf(files, project, output):
         revisions_text += '   :class: revisions-table\n'
         revisions_text += '   :header-rows: 1\n'
         revisions_text += '\n'
-        revisions_text += '   * - Version\n'
+        revisions_text += '   * - Revision\n'
         revisions_text += '     - Date\n'
         revisions_text += '     - Description\n'
 
-        last_version = None
+        last_revision = None
         last_date = None
         revisions = project['revisions']
         for revision in revisions:
             if isinstance(revision, dict):
                 key = list(revision.keys())[0]
-                ver = key
+                rev = key
                 date = '--'
                 m = re.search(r'([\w\d.-:]+)\s+(?:\(|\[)([0-9\w\s./:]+)(?:\)|\])', key)
                 if m:
-                    ver = m.group(1)
+                    rev = m.group(1)
                     date = m.group(2)
-                if not last_version:
-                    last_version = ver
+                if not last_revision:
+                    last_revision = rev
                 if not last_date:
                     last_date = date
-                revisions_text += '   * - **' + str(ver) + '**\n'
+                revisions_text += '   * - **' + str(rev) + '**\n'
                 revisions_text += '     - ' + date + '\n'
                 revisions_text += '     - .. class:: revision-list\n'
                 revisions_text += '\n'
@@ -179,8 +175,10 @@ def pdf(files, project, output):
         if not 'fields' in project:
             project['fields'] = {}
         project['fields']['revisions'] = revisions_text
-        if (not 'version' in project['fields']) and last_version:
-            project['fields']['version'] = last_version
+        if (not 'revision' in project['fields']) and last_revision:
+            project['fields']['revision'] = last_revision
+        if (not 'version' in project['fields']) and last_revision:
+            project['fields']['version'] = last_revision
         if (not 'date' in project['fields']) and last_date:
             project['fields']['date'] = last_date
 
