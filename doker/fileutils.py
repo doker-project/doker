@@ -77,7 +77,7 @@ def to_list(file_tree):
   return obj_list
 
 def to_tree(file_list):
-    file_tree = {}
+    file_tree = OrderedDict()
     for file in file_list:
         file_tree[to_key(file)] = file
     return file_tree
