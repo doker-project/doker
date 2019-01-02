@@ -5,7 +5,7 @@ import os
 import sys
 import yaml
 
-from doker import fileutils, generate, log
+from . import fileutils, generate, log
 
 def main():
     try:
