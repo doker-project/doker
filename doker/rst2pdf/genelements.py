@@ -94,9 +94,9 @@ class HandleTable(NodeHandler, docutils.nodes.table):
             style = client.styles.combinedStyle(['table']+node['classes'])
         else:
             style = client.styles['table']
-        return [MySpacer(0, client.styles['table'].spaceBefore)] + \
+        return [MySpacer(0, style.spaceBefore)] + \
                     client.gather_elements(node, style=style) +\
-                    [MySpacer(0, client.styles['table'].spaceAfter)]
+                    [MySpacer(0, style.spaceAfter)]
 
 class HandleTGroup(NodeHandler, docutils.nodes.tgroup):
     def gather_elements(self, client, node, style):
