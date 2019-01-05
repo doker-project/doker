@@ -7,6 +7,17 @@ import yaml
 
 from . import fileutils, generate, log
 
+def merge_dicts(a, b):
+    for key in b:
+        if key in a:
+            if isinstance(a[key], dict) and isinstance(b[key], dict):
+                merge_dicts(a[key], b[key])
+            elif a[key] == b[key]:
+                pass
+        else:
+            a[key] = b[key]
+    return a
+
 def main():
     try:
         import pkg_resources
@@ -45,6 +56,15 @@ def main():
     if not 'root' in project:
         project['root'] = '.'
     root_dir = os.path.abspath(project['root'])
+
+    if 'parent' in project and os.path.isfile(project['parent']):
+        with open(project['parent'], 'r') as f:
+            try:
+                parent = yaml.load(f)
+            except yaml.YAMLError as err:
+                log.error("Parsing YAML parent file failed: '%s'", err)
+                sys.exit(1)
+        merge_dicts(project, parent)
 
     file_type = '.rst' if (args.pdf or args.odt)  else ('.yaml' if args.html else '')
     file_tree = fileutils.to_tree(project['files']) if 'files' in project else fileutils.get_tree(root_dir, file_type)
