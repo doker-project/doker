@@ -57,7 +57,7 @@ def html(files, project, output):
     for file in files:
         with open(file['src'], 'r') as f:
             try:
-                page = yaml.load(f)
+                page = yaml.full_load(f)
             except yaml.YAMLError as err:
                 log.error("Parsing YAML page file failed: '%s'", err)
                 raise

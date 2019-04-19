@@ -53,7 +53,7 @@ def stylesheet_to_json(stylesheet_file):
         raise IOError('Stylesheet file error')
     with open(stylesheet_file, 'r') as f:
         try:
-            style = yaml.load(f)
+            style = yaml.full_load(f)
         except yaml.YAMLError as err:
             log.error("Parsing YAML style file failed: '%s'", err)
             raise

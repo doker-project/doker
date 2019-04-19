@@ -45,7 +45,7 @@ def main():
 
     with open(project_file, 'r') as f:
         try:
-            project = yaml.load(f)
+            project = yaml.full_load(f)
         except yaml.YAMLError as err:
             log.error("Parsing YAML project file failed: '%s'", err)
             sys.exit(1)
@@ -60,7 +60,7 @@ def main():
     if 'parent' in project and os.path.isfile(project['parent']):
         with open(project['parent'], 'r') as f:
             try:
-                parent = yaml.load(f)
+                parent = yaml.full_load(f)
             except yaml.YAMLError as err:
                 log.error("Parsing YAML parent file failed: '%s'", err)
                 sys.exit(1)
