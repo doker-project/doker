@@ -4,6 +4,7 @@ import json
 import re
 import os
 import sys
+import tempfile
 import yaml
 
 from collections import OrderedDict
@@ -42,12 +43,7 @@ def readfile(filename):
             text = f.read()
     return text
 
-def remove(file_list):
-    for file in file_list:
-        log.info("Removing temporary '%s'", os.path.basename(file))
-        os.remove(file)
-
-def stylesheet_to_json(stylesheet_file):
+def stylesheet_to_tmp_json(stylesheet_file):
     if not os.path.isfile(stylesheet_file):
         log.error("Unable to open stylesheet file: '%s'", stylesheet_file)
         raise IOError('Stylesheet file error')
@@ -58,18 +54,11 @@ def stylesheet_to_json(stylesheet_file):
             log.error("Parsing YAML style file failed: '%s'", err)
             raise
 
-    stylesheet_name = 'tmp-stylesheet'
-    i = 0
-    while True:
-        stylesheet_json = stylesheet_name + str(i) + '.json'
-        if not os.path.isfile(stylesheet_json):
-            break
-        i += 1
-    log.info("Generating temporary '%s'", stylesheet_json)
-    with open(stylesheet_json, 'w') as f:
-        f.write(json.dumps(style))
+    tmp_json = tempfile.NamedTemporaryFile(mode='w+t', suffix='.json')
+    tmp_json.write(json.dumps(style))
+    tmp_json.flush()
 
-    return stylesheet_json
+    return tmp_json
 
 def to_list(file_tree):
   obj_list = []

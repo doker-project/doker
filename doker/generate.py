@@ -117,23 +117,19 @@ def odt(files, project, output):
         f.write(odt_contents)
 
 def pdf(files, project, output):
-    generated = []
     pdf = project['pdf'] if 'pdf' in project else None
 
     # Stylesheet processing
     stylesheets = []
     try:
         if pdf and ('stylesheet' in pdf):
-            stylesheet_json = fileutils.stylesheet_to_json(pdf['stylesheet'])
-            generated.append(stylesheet_json)
-            stylesheets.append(stylesheet_json)
+            tmp_json = fileutils.stylesheet_to_tmp_json(pdf['stylesheet'])
+            stylesheets.append(tmp_json)
         if pdf and ('stylesheets' in pdf):
             for stylesheet_file in pdf['stylesheets']:
-                stylesheet_json = fileutils.stylesheet_to_json(stylesheet_file)
-                generated.append(stylesheet_json)
-                stylesheets.append(stylesheet_json)
+                tmp_json = fileutils.stylesheet_to_tmp_json(stylesheet_file)
+                stylesheets.append(tmp_json)
     except Exception:
-        fileutils.remove(generated)
         raise
 
     # Revisions
@@ -190,7 +186,6 @@ def pdf(files, project, output):
         cover_file = pdf['cover']
         if not os.path.isfile(cover_file):
             log.error("Unable to open cover file: '%s'", cover_file)
-            fileutils.remove(generated)
             raise IOError('Cover file error')
         text += preprocess.pdf(fileutils.readfile(cover_file), os.path.dirname(cover_file), project)
 
@@ -219,17 +214,19 @@ def pdf(files, project, output):
         doctree = preprocess.doctree_pdf(doctree, pdf)
     log.info("Generating '%s'", os.path.basename(output))
     try:
+        stylesheet_names = []
+        for stylesheet in stylesheets:
+            stylesheet_names.append(stylesheet.name)
         RstToPdf(
             background_fit_mode='scale',
             breaklevel=pdf['break-level'] if pdf and ('break-level' in pdf) else 1,
             breakside=pdf['break-side'] if pdf and ('break-side' in pdf) else 'any',
             repeat_table_rows=pdf['repeate-table-rows'] if pdf and ('repeate-table-rows' in pdf) else True,
             smarty=str(pdf['smartquotes'] if pdf and ('smartquotes' in pdf) else 1),
-            stylesheets=stylesheets,
+            stylesheets=stylesheet_names,
         ).createPdf(doctree=doctree, output=output)
     except Exception as err:
         log.error("PDF generating failed: %s", err)
-        fileutils.remove(generated)
         raise
 
     log.info("Post-processing '%s'", os.path.basename(output))
@@ -246,6 +243,3 @@ def pdf(files, project, output):
         text = f.read()
     with open(output, 'wb') as f:
         f.write(re.sub(r'/Creator \(\\\(unspecified\\\)\)', '/Creator (' + creator + ')' , text))
-
-    # Temporary files removing
-    fileutils.remove(generated)
