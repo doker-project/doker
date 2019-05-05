@@ -13,11 +13,15 @@ numbering \
 "
 
 set -e
-cd "$(dirname "$(readlink -f "${0}")")"/../examples/pdf
+cd "$(dirname "$(readlink -f "${0}")")/.."
+
+pip install . --user
+
+cd examples/pdf
 
 for EXAMPLE in $EXAMPLES
 do
   cd $EXAMPLE
-  ../../../doker/main.py --pdf $EXAMPLE
+  doker --pdf $EXAMPLE
   cd ..
 done
