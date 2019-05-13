@@ -40,10 +40,11 @@ setup(
         'docutils',
         'Jinja2',
         'pyyaml',
-        'reportlab>=2.4',
+        'reportlab==3.5.18', # Waiting for fixing https://github.com/rst2pdf/rst2pdf/issues/773 
         'Pygments',
         'pdfrw',
         'pillow',
+        'six',
     ],
 )
 

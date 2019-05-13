@@ -1,6 +1,12 @@
 `Unreleased`_
 -------------
 
+Fixed:
+^^^^^^
+
+* Set ``reportlab`` version to v3.2.18 due to https://github.com/rst2pdf/rst2pdf/issues/773 and https://github.com/rst2pdf/rst2pdf/issues/772
+* Added ``six`` package to the dependencies list
+
 `0.1.1`_ - 2019-04-19
 ---------------------
 
