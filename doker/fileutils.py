@@ -54,7 +54,7 @@ def stylesheet_to_tmp_json(stylesheet_file):
             log.error("Parsing YAML style file failed: '%s'", err)
             raise
 
-    tmp_json = tempfile.NamedTemporaryFile(mode='w+t', suffix='.json')
+    tmp_json = tempfile.NamedTemporaryFile(mode='w+t', suffix='.json', delete=False)
     tmp_json.write(json.dumps(style))
     tmp_json.flush()
 
