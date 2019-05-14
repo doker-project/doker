@@ -111,6 +111,8 @@ jinja_env = jinja2.Environment(
 )
 
 def renderTemplate(tname, **context):
+    tname = tname.replace('\\', '/')
+    tname = re.sub(r'^\w:\/', r'/', tname)
     template =jinja_env.get_template(tname)
     return template.render(**context)
 
