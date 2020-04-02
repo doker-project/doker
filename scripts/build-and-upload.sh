@@ -3,7 +3,7 @@
 set -e
 cd "$(dirname "$(readlink -f "${0}")")"/..
 
-pip install --user --upgrade setuptools wheel twine
+python3 -m pip install --user --upgrade setuptools wheel twine
 
 rm -rfv build dist doker.egg-info
 

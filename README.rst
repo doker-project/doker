@@ -8,7 +8,7 @@ Installation
 
 Run in console::
 
-  pip install doker
+  python3 -m pip install doker --user
 
 Usage
 =====

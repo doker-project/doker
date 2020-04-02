@@ -5,8 +5,8 @@
 # See LICENSE.txt for licensing terms
 
 '''
-preprocess is a rst2pdf extension module (invoked by -e preprocess
-on the rst2pdf command line.
+preprocess is a rst2pdf extension module (invoked by ``-e preprocess``
+on the rst2pdf command line).
 
 There is a testcase for this file at rst2pdf/tests/test_preprocess.txt
 
@@ -101,22 +101,26 @@ file were automatically removed.
 
 '''
 
+from collections import namedtuple
 import os
 import re
-import sys
-
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from ..rson import loads as rson_loads
 
 from ..log import log
 
-class DummyFile(str):
-    ''' We could use stringio, but that's really overkill for what
-        we need here.
+
+class DummyFile(object):
+    ''' Stores the path and content of a file which may, or may not,
+        have been written to disk.
     '''
+    def __init__(self, name, content):
+        self.name = name
+        self._content = content
+
     def read(self):
-        return self
+        return self._content
+
 
 class Preprocess(object):
     def __init__(self, sourcef, incfile=False, widthcount=0):
@@ -124,10 +128,17 @@ class Preprocess(object):
             self.result (the preprocessed file) and self.styles (extracted stylesheet
             information) for the caller.
         '''
+
+        # fix keywords dict for use by the parser.
+        self.keywords = dict([(x + '::', getattr(self, 'handle_' + x)) for x in self.keywords])
+
         self.widthcount = widthcount
 
         name = sourcef.name
-        source = sourcef.read().replace('\r\n', '\n').replace('\r', '\n')
+        source = sourcef.read()
+        if isinstance(source, bytes):
+            source = source.decode('utf8')
+        source = source.replace('\r\n', '\n').replace('\r', '\n')
 
         # Make the determination if an include file is a stylesheet or
         # another restructured text file, and handle stylesheets appropriately.
@@ -146,12 +157,10 @@ class Preprocess(object):
                 return
 
         # Read the whole file and wrap it in a DummyFile
-        self.sourcef = DummyFile(source)
-        self.sourcef.name = name
+        self.sourcef = DummyFile(name, source)
 
         # Use a regular expression on the source, to take it apart
         # and put it back together again.
-
         self.source = source = [x for x in self.splitter(source) if x]
         self.result = result = []
         self.styles = {}
@@ -190,19 +199,19 @@ class Preprocess(object):
                 continue
 
             result.pop()
-            func(self, chunk.strip())
+            func(chunk.strip())
 
         # Determine if we actually did anything or not.  Just use our source file
         # if not.  Otherwise, write the results to disk (so the user can use them
         # for debugging) and return them.
         if self.changed:
             result.append('')
-            result = DummyFile('\n'.join(result))
-            result.name = name + '.build_temp'
-            self.keep = keep = len(result.strip())
+            result = DummyFile(name + '.build_temp', '\n'.join(result))
+            self.keep = keep = len(result.read().strip())
             if keep:
-                f = open(result.name, 'wb')
-                f.write(result)
+                f = open(result.name, 'w')
+                # Can call read a second time here because it's a DummyFile:
+                f.write(result.read())
                 f.close()
             self.result = result
         else:
@@ -215,7 +224,7 @@ class Preprocess(object):
 
         for prefix in ('', os.path.dirname(self.sourcef.name)):
             try:
-                f = open(os.path.join(prefix, fname), 'rb')
+                f = open(os.path.join(prefix, fname), 'r')
             except IOError:
                 continue
             else:
@@ -342,9 +351,6 @@ class Preprocess(object):
     expression = '(?:%s)' % '|'.join([blankline, singleword, comment])
     splitter = re.compile(expression, re.MULTILINE).split
 
-    # Once we have used the keywords in our regular expression,
-    # fix them up for use by the parser.
-    keywords = dict([(x + '::', vars()['handle_' + x]) for x in keywords])
 
 class MyStyles(str):
     ''' This class conforms to the styles.py processing requirements

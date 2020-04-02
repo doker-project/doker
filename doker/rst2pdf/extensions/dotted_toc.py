@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 # See LICENSE.txt for licensing terms
-#$HeadURL$
-#$LastChangedDate$
-#$LastChangedRevision$
 
 # Some fragments of code are copied from Reportlab under this license:
 #
@@ -38,9 +35,11 @@
 #####################################################################################
 
 from copy import copy
+
 import reportlab
-from reportlab.platypus.tableofcontents import drawPageNumbers
 import doker.rst2pdf.genelements as genelements
+from reportlab.platypus import Spacer
+from reportlab.platypus.tableofcontents import drawPageNumbers
 
 Table = genelements.Table
 Paragraph = genelements.Paragraph
@@ -54,8 +53,7 @@ Paragraph = genelements.Paragraph
 All I did was take the wrap() method from the stock reportlab TOC generator,
 and make the minimal changes to make it work on MY documents in rst2pdf.
 
-History:
-~~~~~~~~
+**History:**
 
 The reportlab TOC generator adds nice dots between the text and the page number.
 The rst2pdf one does not.
@@ -71,13 +69,14 @@ out if this is right, or how to support dots in the TOC in the main code.
 Mind you, the original RL implementation is a complete hack in any case:
 
 - It uses a callback to a nested function which doesn't even bother to
-    assume the original enclosing scope is available at callback time.
-    This leads it to do crazy things like eval()
+  assume the original enclosing scope is available at callback time.
+  This leads it to do crazy things like eval()
 
 - It uses a single name in the canvas for the callback function
-    (this is what kills multiple TOC capability) when it would be
-    extremely easy to generate a unique name.
+  (this is what kills multiple TOC capability) when it would be
+  extremely easy to generate a unique name.
 '''
+
 
 class DottedTableOfContents(genelements.MyTableOfContents):
 
@@ -120,9 +119,9 @@ class DottedTableOfContents(genelements.MyTableOfContents):
         for entry in _tempEntries:
             level, text, pageNum = entry[:3]
             left_col_level = level - base_level
-            if reportlab.Version > '2.3': # For ReportLab post-2.3
-                style=self.getLevelStyle(left_col_level)
-            else: # For ReportLab <= 2.3
+            if reportlab.Version > '2.3':  # For ReportLab post-2.3
+                style = self.getLevelStyle(left_col_level)
+            else:  # For ReportLab <= 2.3
                 style = self.levelStyles[left_col_level]
 
             if self.dotsMinLevel >= 0 and left_col_level >= self.dotsMinLevel:
@@ -134,19 +133,18 @@ class DottedTableOfContents(genelements.MyTableOfContents):
             style.textColor = self.linkColor
             key = self.refid_lut.get((level, text, pageNum), None)
             if key:
-                if not isinstance(text, unicode):
-                    text = unicode(text, 'utf-8')
                 text = u'<a href="#%s">%s</a>' % (key, text)
 
             para = Paragraph('%s<onDraw name="%s" label="%s"/>' % (text, funcname, len(end_info)), style)
             end_info.append((style, pageNum, key, dot))
             if style.spaceBefore:
-                tableData.append([Spacer(1, style.spaceBefore),])
-            tableData.append([para,])
+                tableData.append([Spacer(1, style.spaceBefore), ])
+            tableData.append([para, ])
 
         self._table = Table(tableData, colWidths=(availWidth,), style=self.tableStyle)
 
-        self.width, self.height = self._table.wrapOn(self.canv,availWidth, availHeight)
+        self.width, self.height = self._table.wrapOn(self.canv, availWidth, availHeight)
         return (self.width, self.height)
+
 
 genelements.MyTableOfContents = DottedTableOfContents

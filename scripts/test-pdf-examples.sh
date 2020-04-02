@@ -15,7 +15,7 @@ numbering \
 set -e
 cd "$(dirname "$(readlink -f "${0}")")/.."
 
-pip install . --user
+python3 -m pip install . --user
 
 cd examples/pdf
 

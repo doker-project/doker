@@ -1,6 +1,13 @@
 `Unreleased`_
 -------------
 
+Changed:
+~~~~~~~~
+
+* Use latest ``reportlab``
+* Local copy of ``rst2pdf`` updated to v0.96
+* Moved onto the Python 3 with no regret
+
 `0.1.2`_ - 2019-05-14
 ---------------------
 

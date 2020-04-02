@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#$URL$
-#$Date$
-#$Revision$
-
 # See LICENSE.txt for licensing terms
 
 # Some fragments of code are copied from Reportlab under this license:
@@ -40,10 +36,8 @@
 
 
 __docformat__ = 'reStructuredText'
+from importlib import import_module
 import six
-# Import Psyco if available
-from .opt_imports import psyco
-psyco.full()
 
 import sys
 import os
@@ -51,8 +45,6 @@ import tempfile
 import re
 import string
 import logging
-
-from importlib import import_module
 
 if six.PY2:
     from cStringIO import StringIO
@@ -96,7 +88,7 @@ from .sinker import Sinker
 from .image import MyImage, missing
 from .aafigure_directive import Aanode
 from .log import log, nodeid
-from .smartypants import smartyPants
+from smartypants import smartypants
 from . import styles as sty
 from .nodehandlers import nodehandlers
 from .languages import get_language_available
@@ -105,16 +97,6 @@ from .opt_imports import Paragraph, BaseHyphenator, PyHyphenHyphenator, \
 
 # Template engine for covers
 import jinja2
-jinja_env = jinja2.Environment(
-    loader=jinja2.FileSystemLoader('/'),
-    autoescape=jinja2.select_autoescape(['html', 'xml'])
-)
-
-def renderTemplate(tname, **context):
-    tname = tname.replace('\\', '/')
-    tname = re.sub(r'^\w:\/', r'/', tname)
-    template =jinja_env.get_template(tname)
-    return template.render(**context)
 
 numberingstyles={ 'arabic': 'ARABIC',
                   'roman': 'ROMAN_UPPER',
@@ -196,7 +178,16 @@ class RstToPdf(object):
         self.fit_mode = fit_mode
         self.background_fit_mode = background_fit_mode
         self.to_unlink = []
-        self.smarty = smarty
+
+        # See https://pythonhosted.org/smartypants/reference.html#smartypants-module
+        self.smartypants_attributes = 0
+        if smarty == '1':
+            self.smartypants_attributes = 1 | 6 | 8 | 64 | 512
+        elif smarty == '2':
+            self.smartypants_attributes = 1 | 6 | 24 | 64 | 512
+        elif smarty == '3':
+            self.smartypants_attributes = 1 | 6 | 40 | 64 | 512
+
         self.baseurl = baseurl
         self.repeat_table_rows = repeat_table_rows
         self.footnote_backlinks = footnote_backlinks
@@ -219,14 +210,13 @@ class RstToPdf(object):
         # to do it only if it's requested
         if sphinx and sphinx_module:
             import sphinx.roles
-            from sphinxnodes import sphinxhandlers
+            from rst2pdf.sphinxnodes import sphinxhandlers
             self.highlightlang = highlightlang
             self.gen_pdftext, self.gen_elements = sphinxhandlers(self)
         else:
             # These rst2pdf extensions conflict with sphinx
             directives.register_directive('code-block', pygments_code_block_directive.code_block_directive)
             directives.register_directive('code', pygments_code_block_directive.code_block_directive)
-            import math_directive
             self.gen_pdftext, self.gen_elements = nodehandlers(self)
 
         self.sphinx = sphinx
@@ -391,7 +381,6 @@ class RstToPdf(object):
         if 'float' in style.__dict__:
             style = None # Don't pass floating styles to children!
         for n in node.children:
-            # import pdb; pdb.set_trace()
             r.extend(self.gen_elements(n, style=style))
         return r
 
@@ -421,10 +410,10 @@ class RstToPdf(object):
         elif node.parent.get('enumtype') == 'upperroman':
             b = toRoman(node.parent.children.index(node) + start).upper() + '.'
         elif node.parent.get('enumtype') == 'loweralpha':
-            b = string.lowercase[node.parent.children.index(node)
+            b = 'abcdefghijklmnopqrstuvwxyz'[node.parent.children.index(node)
                 + start - 1] + '.'
         elif node.parent.get('enumtype') == 'upperalpha':
-            b = string.uppercase[node.parent.children.index(node)
+            b = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[node.parent.children.index(node)
                 + start - 1] + '.'
         else:
             log.critical("Unknown kind of list_item %s [%s]",
@@ -450,8 +439,6 @@ class RstToPdf(object):
 
         # If there is a multicol cell, we need to insert Continuation Cells
         # to make all rows the same length
-
-        #from pudb import set_trace; set_trace()
 
         for y in range(0, len(rows)):
             for x in range(len(rows[y])-1, -1, -1):
@@ -552,7 +539,7 @@ class RstToPdf(object):
 
         if self.numbered_links:
             # Transform all links to sections so they show numbers
-            from sectnumlinks import SectNumFolder, SectRefExpander
+            from .sectnumlinks import SectNumFolder, SectRefExpander
             snf = SectNumFolder(self.doctree)
             self.doctree.walk(snf)
             srf = SectRefExpander(self.doctree, snf.sectnums)
@@ -565,26 +552,22 @@ class RstToPdf(object):
         elements = self.gen_elements(self.doctree)
 
         # Find cover template, save it in cover_file
-        def find_cover(name):
-            cover_path=[self.basedir, os.path.expanduser('~/.rst2pdf'),
-                os.path.join(self.PATH,'templates')]
-            cover_file=None
-            for d in cover_path:
-                if os.path.exists(os.path.join(d,name)):
-                    cover_file=os.path.join(d,name)
-                    break
-            return cover_file
+        jinja_env = jinja2.Environment(
+            loader=jinja2.FileSystemLoader([
+                    self.basedir, os.path.expanduser('~/.rst2pdf'),
+                    os.path.join(self.PATH,'templates')]),
+            autoescape=jinja2.select_autoescape(['html', 'xml'])
+        )
 
-        cover_file=find_cover(self.custom_cover)
-        if cover_file is None:
+        try:
+            template = jinja_env.get_template(self.custom_cover)
+        except jinja2.TemplateNotFound:
             log.error("Can't find cover template %s, using default"%self.custom_cover)
-            cover_file=find_cover('cover.tmpl')
+            template = jinja_env.get_template('cover.tmpl')
 
         # Feed data to the template, get restructured text.
-        cover_text = renderTemplate(tname=cover_file,
-                            title=self.doc_title,
-                            subtitle=self.doc_subtitle
-                        )
+        cover_text = template.render(title=self.doc_title,
+                                     subtitle=self.doc_subtitle)
 
         # This crashes sphinx because .. class:: in sphinx is
         # something else. Ergo, pdfbuilder does it in its own way.
@@ -646,7 +629,6 @@ class RstToPdf(object):
         # Handle totally empty documents (Issue #547)
         if not elements:
             elements.append(Paragraph("", style=self.styles['base']))
-
         if getattr(self, 'mustMultiBuild', False):
             # Force a multibuild pass
             if not isinstance(elements[-1],UnhappyOnce):
@@ -842,11 +824,11 @@ def setPageCounter(counter=None, style=None):
     elif _counterStyle=='roman':
         ptext=toRoman(_counter).upper()
     elif _counterStyle=='alpha':
-        ptext=string.uppercase[_counter%26]
+        ptext='ABCDEFGHIJKLMNOPQRSTUVWXYZ'[_counter%26]
     elif _counterStyle=='loweralpha':
-        ptext=string.lowercase[_counter%26]
+        ptext='abcdefghijklmnopqrstuvwxyz'[_counter%26]
     else:
-        ptext=unicode(_counter)
+        ptext=str(_counter)
     return ptext
 
 class MyContainer(_Container, Flowable):
@@ -913,13 +895,12 @@ class HeaderOrFooter(object):
         pnum=setPageCounter()
 
         def replace(text):
-            if not isinstance(text, unicode):
+            # Ensure text is unicode
+            if isinstance(text, bytes):
                 try:
-                    text = unicode(text, e.encoding)
-                except AttributeError:
-                    text = unicode(text, 'utf-8')
-                except TypeError:
-                    text = unicode(text, 'utf-8')
+                    text = text.decode(e.encoding)
+                except (AttributeError, TypeError):
+                    text = text.decode('utf-8')
 
             text = text.replace(u'###Page###', pnum)
             if '###Total###' in text:
@@ -930,7 +911,7 @@ class HeaderOrFooter(object):
                 getattr(canv, 'sectName', ''))
             text = text.replace(u"###SectNum###",
                 getattr(canv, 'sectNum', ''))
-            text = smartyPants(text, smarty)
+            text = smartypants(text, smarty)
             return text
 
         for i,e  in enumerate(elems):
@@ -964,7 +945,7 @@ class HeaderOrFooter(object):
         self.totalpages = max(self.totalpages, doc.page)
         items = self.prepared
         if items:
-            self.replaceTokens(items, canv, doc, pageobj.smarty)
+            self.replaceTokens(items, canv, doc, pageobj.smartypants_attributes)
             container = MyContainer()
             container._content = items
             container.width = width
@@ -981,7 +962,7 @@ class FancyPage(PageTemplate):
         self.styles = client.styles
         self._head = HeaderOrFooter(_head, client=client)
         self._foot = HeaderOrFooter(_foot, True, client)
-        self.smarty = client.smarty
+        self.smartypants_attributes = client.smartypants_attributes
         self.show_frame = client.show_frame
         self.image_cache = {}
         PageTemplate.__init__(self, _id, [])
@@ -1088,7 +1069,6 @@ class FancyPage(PageTemplate):
         self.fy = styles.bm
         self.th = styles.ph - styles.tm - styles.bm - self.hh \
                     - self.fh - styles.ts - styles.bs
-
         # Adjust gutter margins
         if self.is_left(doc.page): # Left page
             x1 = styles.lm
@@ -1102,12 +1082,21 @@ class FancyPage(PageTemplate):
 
         self.frames = []
         for frame in self.template['frames']:
+            frame = frame[:]
+            while len(frame) < 8:
+                # This is the default in SmartFrame. At some point in the future we
+                # may want to change this to 0.
+                frame.append(6)
             self.frames.append(SmartFrame(self,
                 styles.adjustUnits(frame[0], self.tw) + x1,
                 styles.adjustUnits(frame[1], self.th) + y1,
                 styles.adjustUnits(frame[2], self.tw),
                 styles.adjustUnits(frame[3], self.th),
-                    showBoundary=self.show_frame))
+                leftPadding=styles.adjustUnits(frame[4], self.tw),
+                bottomPadding=styles.adjustUnits(frame[5], self.th),
+                rightPadding=styles.adjustUnits(frame[6], self.tw),
+                topPadding=styles.adjustUnits(frame[7], self.th),
+                showBoundary=self.show_frame))
         canv.firstSect = True
         canv._pagenum = doc.page
         for frame in self.frames:
@@ -1363,7 +1352,7 @@ def main(_args=None):
         options, args = parser.parse_args(copy(_args))
 
     if options.version:
-        from . import version
+        from rst2pdf import version
         six.print_(version)
         sys.exit(0)
 
@@ -1409,7 +1398,7 @@ def main(_args=None):
         filename = args[0]
         options.basedir=os.path.dirname(os.path.abspath(filename))
         try:
-            infile = open(filename)
+            infile = open(filename, 'rb')
             close_infile = True
         except IOError as e:
             log.error(e)
@@ -1583,9 +1572,6 @@ def add_extensions(options):
             prefix = os.path.join(os.path.dirname(__file__), 'extensions')
             if prefix not in sys.path:
                 sys.path.append(prefix)
-            parentdir = os.path.dirname(prefix)
-            if parentdir not in sys.path:
-                sys.path.append(parentdir)
             prefix = os.getcwd()
         if prefix not in sys.path:
             sys.path.insert(0, prefix)
@@ -1593,11 +1579,11 @@ def add_extensions(options):
         firstname = path_given and modname or (modname + '_r2p')
         try:
             try:
-                module = import_module('.' + firstname, 'extensions')
+                module = import_module(firstname)
             except ImportError as e:
-                module = import_module('.' + modname, 'extensions')
+                module = import_module(modname)
         except ImportError as e:
-            if str(e).split()[-1] not in [firstname, modname]:
+            if str(e).split()[-1].replace("'", '') not in [firstname, modname]:
                 raise
             raise SystemExit('\nError: Could not find module %s '
                                 'in sys.path [\n    %s\n]\nExiting...\n' %

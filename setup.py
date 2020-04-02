@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python3
 
 import re
 from os import path
@@ -9,16 +9,15 @@ current_dir = path.abspath(path.dirname(__file__))
 with open(path.join(current_dir, 'CHANGELOG.rst'), 'r') as f:
     for line in f:
         m = re.search(r'`(\d+\.\d+\.\d+)`_', line)
-        print(line)
         if m:
             __version__ = m.group(1)
-            break;
+            break
 
 setup(
     name='doker',
     version=__version__,
     packages=find_packages(),
-    author='Doker Authors',
+    author='Shamil Yakupov',
     description="Rich PDF documents creating tool",
     url='https://github.com/doker-project/doker',
     long_description=open('README.rst').read(),
@@ -27,24 +26,23 @@ setup(
             'doker = doker.main:main',
         ]},
     classifiers=[
-        "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     package_data={
+        '': ['CHANGELOG.rst', 'LICENSE'],
         'doker': ['rst2pdf/styles/*.json', 'rst2pdf/styles/*.style', 'rst2pdf/images/*.png', 'rst2pdf/images/*.jpg', 'rst2pdf/templates/*.tmpl'],
-        '': ['CHANGELOG.rst', 'LICENSE']
     },
     install_requires = [
         'docutils',
         'Jinja2',
-        'pyyaml',
-        'reportlab==3.5.18', # Waiting for fixing https://github.com/rst2pdf/rst2pdf/issues/773 
-        'Pygments',
         'pdfrw',
         'pillow',
+        'pygments',
+        'pyyaml',
+        'reportlab',
         'six',
+        'smartypants',
     ],
 )
-

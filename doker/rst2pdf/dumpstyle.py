@@ -68,7 +68,7 @@ def dumps(obj, forcestyledict=True):
         if not obj:
             result.append('{}')
             return
-        obj = sorted(obj.iteritems())
+        obj = sorted(obj.items())
         multiline = indent and ( len(obj) > 2 or
                     len(obj) == 2 and (
                          isinstance(obj[0][-1], (list, dict)) or
@@ -144,7 +144,7 @@ def fixstyle(obj):
 def convert(srcname):
     ''' Convert a single file from .json to .style
     '''
-    print srcname
+    print(srcname)
     sstr = open(srcname, 'rb').read()
     sdata = fixstyle(jloads(sstr))
     dstr = dumps(sdata)

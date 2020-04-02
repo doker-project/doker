@@ -14,7 +14,7 @@ import errno
 from docutils import nodes
 from docutils.parsers import rst
 from docutils.parsers.rst import directives
-from .. import genelements
+import doker.rst2pdf.genelements as genelements
 from ..image import MyImage
 import tempfile
 import subprocess
@@ -51,6 +51,9 @@ class UmlDirective(rst.Directive):
         node['format'] = self.options.get('format', 'png')
         return [node]
 
+
+class PlantUmlError(Exception):
+    pass
 
 class UMLHandler(genelements.NodeHandler, plantuml):
     """Class to handle UML nodes"""

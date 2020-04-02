@@ -36,10 +36,11 @@ will be logged.
 import inspect
 import types
 
+from six import with_metaclass
+from smartypants import smartypants
 import docutils.nodes
 
 from .flowables import BoundByWidth, TocEntry
-from .smartypants import smartyPants
 from .log import log, nodeid
 
 
@@ -102,12 +103,13 @@ class MetaHelper(type):
             cls._classinit()
 
 
-class NodeHandler(object):
+class NodeHandler(with_metaclass(MetaHelper, object)):
     ''' NodeHandler classes are used to dispatch
        to the correct class to handle some node class
        type, via a dispatchdict in the main class.
     '''
-    __metaclass__ = MetaHelper
+
+    dispatchdict = {}
 
     @classmethod
     def _classpreinit(baseclass, clstype, name, bases, clsdict):
@@ -174,7 +176,7 @@ class NodeHandler(object):
         try:
             log.debug("%s: %s", handlerinfo, node)
         except (UnicodeDecodeError, UnicodeEncodeError):
-            log.debug("%s: %r", handlerninfo, node)
+            log.debug("%s: %r", handlerinfo, node)
         log.debug("")
 
         # Dispatch to the first matching class in the MRO
@@ -270,7 +272,7 @@ class NodeHandler(object):
         # Try to be clever about when to use smartypants
         if node.__class__ in (docutils.nodes.paragraph,
                 docutils.nodes.block_quote, docutils.nodes.title):
-            return smartyPants(text, smarty)
+            return smartypants(text, smarty)
         return text
 
     # End overridable attributes and methods for textdispatch
@@ -286,6 +288,6 @@ class NodeHandler(object):
         except UnicodeDecodeError:
             pass
 
-        text = self.apply_smartypants(text, client.smarty, node)
+        text = self.apply_smartypants(text, client.smartypants_attributes, node)
         node.pdftext = text
         return text

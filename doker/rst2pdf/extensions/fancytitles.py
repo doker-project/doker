@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import .genelements as genelements
-from .flowables import Heading, MyPageBreak
-from .image import MyImage
+import doker.rst2pdf.genelements as genelements
+from doker.rst2pdf.flowables import Heading, MyPageBreak
+from doker.rst2pdf.image import MyImage
 import docutils
-from .opt_imports import Paragraph
+from doker.rst2pdf.opt_imports import Paragraph
 import reportlab
 import tempfile
 import re
@@ -55,13 +55,12 @@ class FancyTitleHandler(genelements.HandleParagraph, docutils.nodes.title):
                 snum = fch.astext()
             else:
                 snum = None
-            key = node.get('refid')
             maxdepth=4
             if reportlab.Version > '2.1':
                 maxdepth=6
 
             # The parent ID is the refid + an ID to make it unique for Sphinx
-            parent_id=(node.parent.get('ids', [None]) or [None])[0]+u'-'+unicode(id(node))
+            parent_id=(node.parent.get('ids', [None]) or [None])[0]+u'-%s' % id(node)
             if client.depth > 1:
                 node.elements = [ Heading(text,
                         client.styles['heading%d'%min(client.depth, maxdepth)],
@@ -136,8 +135,8 @@ class FancyHeading(MyImage, Heading):
             else:
                 canv.sectNum = ""
 
-        canv.addOutlineEntry(self.stext.encode('utf-8','replace'),
-                                  self.parent_id.encode('utf-8','replace'),
+        canv.addOutlineEntry(self.stext,
+                                  self.parent_id,
                                   int(self.level), False)
 
         # And let MyImage do all the drawing

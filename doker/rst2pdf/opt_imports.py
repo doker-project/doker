@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#$URL$
-#$Date$
-#$Revision$
-
 # See LICENSE.txt for licensing terms
 
 '''
@@ -13,6 +9,8 @@ opt_imports.py contains logic for handling optional imports.
 
 import os
 import sys
+
+import six
 
 from .log import log
 
@@ -56,14 +54,6 @@ except ImportError:
     sphinx = None
 
 try:
-    import psyco
-except ImportError:
-    class psyco(object):
-        @staticmethod
-        def full():
-            pass
-
-try:
     import aafigure
     import aafigure.pdf
 except ImportError:
@@ -79,48 +69,5 @@ try:
 except ImportError:
     mathtext = None
 
-class LazyImports(object):
-    ''' Only import some things if we need them.
-    '''
-
-    def __getattr__(self, name):
-        if name.startswith('_load_'):
-            raise AttributeError
-        value = None
-        if not os.environ.get('DISABLE_' + name.upper()):
-            func = getattr(self, '_load_' + name)
-            try:
-                value = func()
-            except ImportError:
-                pass
-        # Cache the result once we have it
-        setattr(self, name, value)
-        return value
-
-    def _load_pdfinfo(self):
-        try:
-            from pyPdf import pdf
-        except ImportError:
-            import pdfrw as pdf
-        return pdf
-
-    def _load_PILImage(self):
-        try:
-            from PIL import Image as PILImage
-        except ImportError:
-            import Image as PILImage
-        return PILImage
-
-    def _load_PMImage(self):
-        from PythonMagick import Image
-        return Image
-
-    def _load_gfx(self):
-        import gfx
-        return gfx
-
-    def _load_svg2rlg(self):
-        import svg2rlg
-        return svg2rlg
-
-LazyImports = LazyImports()
+import pdfrw as pdfinfo
+from PIL import Image as PILImage

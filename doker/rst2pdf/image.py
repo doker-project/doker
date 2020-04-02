@@ -8,12 +8,22 @@ import tempfile
 from copy import copy
 from reportlab.platypus.flowables import Image, Flowable
 from reportlab.lib.units import *
-import urllib
 
-from .opt_imports import LazyImports
+import six
+
+if six.PY3:
+    from urllib.request import urlretrieve
+else:
+    from urllib import urlretrieve
+
+from .opt_imports import PILImage, pdfinfo
 from .log import log, nodeid
 
-from .svgimage import SVGImage
+try:
+    from .svgimage import SVGImage
+except ImportError:
+    # svglib may optionally not be installed, which causes this error
+    pass
 
 # This assignment could be overridden by an extension module
 VectorPdf = None
@@ -52,11 +62,11 @@ class MyImage (Flowable):
 
     @classmethod
     def support_warning(cls):
-        if cls.warned or LazyImports.PILImage:
+        if cls.warned or PILImage:
             return
         cls.warned = True
         log.warning("Support for images other than JPG,"
-            " is now limited. Please install PIL.")
+            " is now limited. Please install Pillow.")
 
     @staticmethod
     def split_uri(uri):
@@ -80,7 +90,7 @@ class MyImage (Flowable):
 
         if filename.split("://")[0].lower() in ('http','ftp','https'):
             try:
-                filename2, _ = urllib.urlretrieve(filename)
+                filename2, _ = urlretrieve(filename)
                 if filename != filename2:
                     client.to_unlink.append(filename2)
                     filename = filename2
@@ -121,9 +131,6 @@ class MyImage (Flowable):
 
         # Last resort: try everything
 
-
-        PILImage = LazyImports.PILImage
-
         if PILImage:
             ext='.png'
         else:
@@ -139,52 +146,7 @@ class MyImage (Flowable):
                 # Can't read it
                 pass
 
-        # PIL can't or isn't here, so try with Magick
-
-        PMImage = LazyImports.PMImage
-        if PMImage:
-            try:
-                img = PMImage()
-                # Adjust density to pixels/cm
-                dpi=client.styles.def_dpi
-                img.density("%sx%s"%(dpi,dpi))
-                img.read(str(filename))
-                _, tmpname = tempfile.mkstemp(suffix=ext)
-                img.write(tmpname)
-                client.to_unlink.append(tmpname)
-                return tmpname
-            except:
-                # Magick couldn't
-                pass
-        elif PILImage:
-            # Try to use gfx, which produces PNGs, and then
-            # pass them through PIL.
-            # This only really matters for PDFs but it's worth trying
-            gfx = LazyImports.gfx
-            try:
-                # Need to convert the DPI to % where 100% is 72DPI
-                gfx.setparameter( "zoom", str(client.styles.def_dpi/.72))
-                if extension == 'pdf':
-                    doc = gfx.open("pdf", filename)
-                elif extension == 'swf':
-                    doc = gfx.open("swf", filename)
-                else:
-                    doc = None
-                if doc:
-                    img = gfx.ImageList()
-                    img.setparameter("antialise", "1") # turn on antialising
-                    page = doc.getPage(1)
-                    img.startpage(page.width,page.height)
-                    page.render(img)
-                    img.endpage()
-                    _, tmpname = tempfile.mkstemp(suffix='.png')
-                    img.save(tmpname)
-                    client.to_unlink.append(tmpname)
-                    return tmpname
-            except: # Didn't work
-                pass
-
-        # PIL can't and Magick can't, so we can't
+        # PIL can't, so we can't
         self.support_warning()
         log.error("Couldn't load image [%s]"%filename)
         return missing
@@ -213,10 +175,7 @@ class MyImage (Flowable):
         filename, extension, options = self.split_uri(uri)
 
         if '*' in filename:
-            preferred=['gif','jpg','png']
-            if SVGImage.available():
-                preferred.append('svg')
-            preferred.append('pdf')
+            preferred=['gif','jpg','png', 'svg', 'pdf']
 
             # Find out what images are available
             available = glob.glob(filename)
@@ -243,35 +202,21 @@ class MyImage (Flowable):
             filename = missing
 
         if extension in ['svg','svgz']:
-            if SVGImage.available():
-                log.info('Backend for %s is SVGIMage'%filename)
-                backend=SVGImage
-            else:
-                filename = missing
+            log.info('Backend for %s is SVGIMage'%filename)
+            backend=SVGImage
 
         elif extension in ['pdf']:
             if VectorPdf is not None and filename is not missing:
                 backend = VectorPdf
                 filename = uri
-
-            # PDF images are implemented by converting via PythonMagick
-            # w,h are in pixels. I need to set the density
-            # of the image to  the right dpi so this
-            # looks decent
-            elif LazyImports.PMImage or LazyImports.gfx:
-                filename=self.raster(filename, client)
             else:
                 log.warning("Minimal PDF image support "\
-                    "requires PythonMagick or the vectorpdf extension [%s]", filename)
+                    "requires the vectorpdf extension [%s]", filename)
                 filename = missing
-        elif extension != 'jpg' and not LazyImports.PILImage:
-            if LazyImports.PMImage:
-                # Need to convert to JPG via PythonMagick
-                filename=self.raster(filename, client)
-            else:
-                # No way to make this work
-                log.error('To use a %s image you need PIL installed [%s]',extension,filename)
-                filename=missing
+        elif extension != 'jpg' and not PILImage:
+            # No way to make this work
+            log.error('To use a %s image you need Pillow installed [%s]',extension,filename)
+            filename=missing
         return filename, backend
 
 
@@ -285,7 +230,7 @@ class MyImage (Flowable):
         if uri.split("://")[0].lower() not in ('http','ftp','https'):
             uri = os.path.join(client.basedir,uri)
         else:
-            uri, _ = urllib.urlretrieve(uri)
+            uri, _ = urlretrieve(uri)
             client.to_unlink.append(uri)
 
         srcinfo = client, uri
@@ -310,7 +255,7 @@ class MyImage (Flowable):
         kind = 'direct'
         xdpi, ydpi = client.styles.def_dpi, client.styles.def_dpi
         extension = imgname.split('.')[-1].lower()
-        if extension in ['svg','svgz'] and SVGImage.available():
+        if extension in ['svg','svgz']:
             iw, ih = SVGImage(imgname, srcinfo=srcinfo).wrap(0, 0)
             # These are in pt, so convert to px
             iw = iw * xdpi / 72
@@ -321,11 +266,7 @@ class MyImage (Flowable):
                 xobj = VectorPdf.load_xobj(srcinfo)
                 iw, ih = xobj.w, xobj.h
             else:
-                pdf = LazyImports.pdfinfo
-                if pdf is None:
-                    log.warning('PDF images are not supported without pyPdf or pdfrw [%s]', nodeid(node))
-                    return 0, 0, 'direct'
-                reader = pdf.PdfFileReader(open(imgname, 'rb'))
+                reader = pdfinfo.PdfFileReader(open(imgname, 'rb'))
                 box = [float(x) for x in reader.getPage(0)['/MediaBox']]
                 iw, ih = x2 - x1, y2 - y1
             # These are in pt, so convert to px
@@ -335,24 +276,15 @@ class MyImage (Flowable):
 
         else:
             keeptrying = True
-            if LazyImports.PILImage:
+            if PILImage:
                 try:
-                    img = LazyImports.PILImage.open(imgname)
+                    img = PILImage.open(imgname)
                     img.load()
                     iw, ih = img.size
                     xdpi, ydpi = img.info.get('dpi', (xdpi, ydpi))
                     keeptrying = False
                 except IOError: # PIL throws this when it's a broken/unknown image
                     pass
-            if keeptrying and LazyImports.PMImage:
-                img = LazyImports.PMImage(imgname)
-                iw = img.size().width()
-                ih = img.size().height()
-                density=img.density()
-                # The density is in pixelspercentimeter (!?)
-                xdpi=density.width()*2.54
-                ydpi=density.height()*2.54
-                keeptrying = False
             if keeptrying:
                 if extension not in ['jpg', 'jpeg']:
                     log.error("The image (%s, %s) is broken or in an unknown format"

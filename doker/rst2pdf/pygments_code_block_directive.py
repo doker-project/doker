@@ -240,7 +240,11 @@ def code_block_directive(name, arguments, options, content, lineno,
     if not "linenos_offset" in options:
         line_offset = 0
 
-    language = arguments[0]
+    try:
+        language = arguments[0]
+    except IndexError:
+        language = 'text'
+
     # create a literal block element and set class argument
     code_block = nodes.literal_block(classes=["code", language])
 
@@ -268,7 +272,7 @@ def code_block_directive(name, arguments, options, content, lineno,
             code_block += nodes.Text(values[0], values[0])
             # On the second and later pieces, insert \n and linenos
             linenos = range(lineno, lineno + len(values))
-            for chunk, ln in zip(values, linenos)[1:]:
+            for chunk, ln in list(zip(values, linenos))[1:]:
                 if ln <= total_lines:
                     code_block += nodes.inline(fstr % ln, fstr % ln, classes=[linenumber_cls])
                     code_block += nodes.Text(chunk, chunk)
@@ -350,7 +354,7 @@ def raw_compress(argument):
 # ------------------
 # ::
 
-code_block_directive.arguments = (1, 0, 1)
+code_block_directive.arguments = (0, 1, 1)
 code_block_directive.content = 1
 code_block_directive.options = {'include': directives.unchanged_required,
                                 'start-at': directives.unchanged_required,

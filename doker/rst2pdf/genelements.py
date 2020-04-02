@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*-
 
-#$URL$
-#$Date$
-#$Revision$
 
 # See LICENSE.txt for licensing terms
 
@@ -54,16 +51,15 @@ from .oddeven_directive import OddEvenNode
 
 from .log import log, nodeid
 from .utils import log, parseRaw, parseHTML
-
 from reportlab.platypus import Paragraph, TableStyle
 from reportlab.lib.units import cm
 from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_RIGHT
-
 from .flowables import Table, DelayedTable, SplitTable, Heading, \
               MyIndenter, MyTableOfContents, MySpacer, \
               Separation, BoxedContainer, BoundByWidth, \
               MyPageBreak, Reference, tablepadding, OddEven, \
               XPreformatted
+from .math_flowable import Math
 
 from .opt_imports import wordaxe, Paragraph, ParagraphStyle
 
@@ -94,6 +90,7 @@ class HandleTable(NodeHandler, docutils.nodes.table):
             style = client.styles.combinedStyle(['table']+node['classes'])
         else:
             style = client.styles['table']
+        # TODO: doker patch, need to fix in rst2pdf project
         return [MySpacer(0, style.spaceBefore)] + \
                     client.gather_elements(node, style=style) +\
                     [MySpacer(0, style.spaceAfter)]
@@ -132,7 +129,7 @@ class HandleTGroup(NodeHandler, docutils.nodes.tgroup):
 
         # colWidths are in no specific unit, really. Maybe ems.
         # Convert them to %
-        colWidths=map(int, colWidths)
+        colWidths=[int(x) for x in colWidths]
         tot=sum(colWidths)
         colWidths=["%s%%"%((100.*w)/tot) for w in colWidths]
 
@@ -204,9 +201,7 @@ class HandleTitle(HandleParagraph, docutils.nodes.title):
     def gather_elements(self, client, node, style):
         # Special cases: (Not sure this is right ;-)
         if isinstance(node.parent, docutils.nodes.document):
-            #node.elements = [Paragraph(client.gen_pdftext(node),
-                                        #client.styles['title'])]
-            # The visible output is now done by the cover template
+            # The visible output is done by the cover template
             node.elements = []
             client.doc_title = node.rawsource
             client.doc_title_clean = node.astext().strip()
@@ -231,13 +226,9 @@ class HandleTitle(HandleParagraph, docutils.nodes.title):
                 snum = fch.astext()
             else:
                 snum = None
-            key = node.get('refid')
-            maxdepth=4
-            if reportlab.Version > '2.1':
-                maxdepth=6
-
+            maxdepth=6
             # The parent ID is the refid + an ID to make it unique for Sphinx
-            parent_id=(node.parent.get('ids', [None]) or [None])[0]+u'-'+unicode(id(node))
+            parent_id=(node.parent.get('ids', [None]) or [None])[0]+u'-'+str(id(node))
             node.elements = [ Heading(text,
                     client.styles['heading%d'%min(client.depth, maxdepth)],
                     level=client.depth-1,
@@ -316,8 +307,7 @@ class HandleAuthor(NodeHandler, docutils.nodes.author):
             fb = client.gather_pdftext(node)
 
             t_style=TableStyle(client.styles['field-list'].commands)
-            colWidths=map(client.styles.adjustUnits,
-                client.styles['field-list'].colWidths)
+            colWidths=[client.styles.adjustUnits(x) for x in client.styles['field-list'].colWidths]
 
             node.elements = [Table(
                 [[Paragraph(client.text_for_label("author", style)+":",
@@ -348,7 +338,7 @@ class HandleFList(NodeHandler):
         t_style=TableStyle(client.styles['field-list'].commands)
         colWidths=client.styles['field-list'].colWidths
         if self.adjustwidths:
-            colWidths = map(client.styles.adjustUnits, colWidths)
+            colWidths = [client.styles.adjustUnits(x) for x in colWidths]
         label=client.text_for_label(self.labeltext, style)+":"
         t = self.TableType([[Paragraph(label, style=client.styles['fieldname']),
                     Paragraph(fb, style)]],
@@ -368,7 +358,7 @@ class HandleAddress(HandleFList, docutils.nodes.address):
         t_style=TableStyle(client.styles['field-list'].commands)
         colWidths=client.styles['field-list'].colWidths
         if self.adjustwidths:
-            colWidths = map(client.styles.adjustUnits, colWidths)
+            colWidths = [client.styles.adjustUnits(x) for x in colWidths]
         label=client.text_for_label(self.labeltext, style)+":"
         t = self.TableType([[Paragraph(label, style=client.styles['fieldname']),
                              XPreformatted(fb, style)]
@@ -600,7 +590,6 @@ class HandleListItem(NodeHandler, docutils.nodes.list_item):
         t_style = TableStyle(style.commands)
         # The -3 here is to compensate for padding, 0 doesn't work :-(
         t_style._cmds.extend([
-            #["GRID", [ 0, 0 ], [ -1, -1 ], .25, "black" ],
             ["BOTTOMPADDING", [ 0, 0 ], [ -1, -1 ], -3 ]]
         )
         if extra_space >0:
@@ -611,8 +600,6 @@ class HandleListItem(NodeHandler, docutils.nodes.list_item):
             # The bullet is smaller, move down the bullet
             sbb = -extra_space
 
-        #colWidths = map(client.styles.adjustUnits,
-            #client.styles['item_list'].colWidths)
         colWidths = getattr(style,'colWidths',[])
         while len(colWidths) < 2:
             colWidths.append(client.styles['item_list'].colWidths[len(colWidths)])
@@ -837,7 +824,7 @@ class HandleFootnote(NodeHandler, docutils.nodes.footnote,
                 client.targets.append(ltext)
         elif len(node['backrefs'])==1 and client.footnote_backlinks:
             if ltext not in client.targets:
-                label = Paragraph(ids+'<a href="%s" color="%s">%s</a>' % (
+                label = Paragraph(ids+'<a href="#%s" color="%s">%s</a>' % (
                                     node['backrefs'][0],
                                     client.styles.linkColor,
                                     ltext), client.styles["endnote"])
@@ -891,7 +878,6 @@ class HandleOddEven (NodeHandler, OddEvenNode):
     def gather_elements(self, client, node, style):
         odd=[]
         even=[]
-        #from pudb import set_trace; set_trace()
         if node.children:
             if isinstance (node.children[0], docutils.nodes.paragraph):
                 if node.children[0].get('classes'):
@@ -964,3 +950,23 @@ class HandleAdmonition(NodeHandler, docutils.nodes.attention,
                                 colWidths=[0,None]),
                                 MySpacer(0,st.spaceAfter)]
         return node.elements
+
+
+class HandleMath(NodeHandler, docutils.nodes.math_block,  docutils.nodes.math):
+    def gather_elements(self, client, node, style):
+        label = node.attributes.get('label')
+        return [Math(node.astext(), label, style.fontSize, style.textColor.rgb())]
+
+    def get_text(self, client, node, replaceEnt):
+        #get style for current node
+        sty=client.styles.styleForNode(node)
+        node_fontsize=sty.fontSize
+        node_color='#'+sty.textColor.hexval()[2:]
+        label = node.attributes.get('label')
+        mf = Math(node.astext(),label=label,fontsize=node_fontsize,color=node_color)
+        w, h = mf.wrap(0, 0)
+        descent = mf.descent()
+        img = mf.genImage()
+        client.to_unlink.append(img)
+        return '<img src="%s" width="%f" height="%f" valign="%f"/>' % (
+            img, w, h, -descent)
